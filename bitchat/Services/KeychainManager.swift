@@ -14,8 +14,8 @@ class KeychainManager {
     static let shared = KeychainManager()
     
     // Use consistent service name for all keychain items
-    private let service = "chat.bitchat"
-    private let appGroup = "group.chat.bitchat"
+    private let service = "capish.testiPad5"
+    private let appGroup = "group.capish.testiPad5"
     
     private init() {}
     

@@ -1,6 +1,6 @@
 //
 // ShareViewController.swift
-// bitchatShareExtension
+// bounchatShareExtension
 //
 // This is free and unencumbered software released into the public domain.
 // For more information, see <https://unlicense.org>
@@ -137,7 +137,7 @@ final class ShareViewController: UIViewController {
         if let json = try? JSONSerialization.data(withJSONObject: payload),
            let s = String(data: json, encoding: .utf8) {
             saveToSharedDefaults(content: s, type: "url")
-            finishWithMessage("✓ Shared link to bitchat")
+            finishWithMessage("✓ Link bounchat'a paylaşıldı")
         } else {
             finishWithMessage("Failed to encode link")
         }
@@ -145,11 +145,11 @@ final class ShareViewController: UIViewController {
 
     private func saveAndFinish(text: String) {
         saveToSharedDefaults(content: text, type: "text")
-        finishWithMessage("✓ Shared text to bitchat")
+        finishWithMessage("✓ Metin bounchat'a paylaşıldı")
     }
 
     private func saveToSharedDefaults(content: String, type: String) {
-        guard let userDefaults = UserDefaults(suiteName: "group.chat.bitchat") else { return }
+        guard let userDefaults = UserDefaults(suiteName: "group.com.zorluhan.testiPad") else { return }
         userDefaults.set(content, forKey: "sharedContent")
         userDefaults.set(type, forKey: "sharedContentType")
         userDefaults.set(Date(), forKey: "sharedContentDate")
@@ -159,7 +159,7 @@ final class ShareViewController: UIViewController {
     private func finishWithMessage(_ msg: String) {
         statusLabel.text = msg
         // Complete shortly after showing status
-        DispatchQueue.main.asyncAfter(deadline: .now() + TransportConfig.uiShareExtensionDismissDelaySeconds) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
             self.extensionContext?.completeRequest(returningItems: nil, completionHandler: nil)
         }
     }

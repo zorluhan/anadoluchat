@@ -1,6 +1,6 @@
 //
 // ContentView.swift
-// bitchat
+// anadoluchat
 //
 // This is free and unencumbered software released into the public domain.
 // For more information, see <https://unlicense.org>
@@ -47,7 +47,6 @@ struct ContentView: View {
     @State private var scrollThrottleTimer: Timer?
     @State private var autocompleteDebounceTimer: Timer?
     @State private var showLocationChannelsSheet = false
-    @State private var showVerifySheet = false
     @State private var expandedMessageIDs: Set<String> = []
     // Window sizes for rendering (infinite scroll up)
     @State private var windowCountPublic: Int = 300
@@ -181,7 +180,7 @@ struct ContentView: View {
             isPresented: $showMessageActions,
             titleVisibility: .visible
         ) {
-            Button("mention") {
+            Button("bahset") {
                 if let sender = selectedMessageSender {
                     // Pre-fill the input with an @mention and focus the field
                     messageText = "@\(sender) "
@@ -189,7 +188,7 @@ struct ContentView: View {
                 }
             }
 
-            Button("direct message") {
+            Button("direkt mesaj") {
                 if let peerID = selectedMessageSenderID {
                     if peerID.hasPrefix("nostr:") {
                         if let full = viewModel.fullNostrHex(forSenderPeerID: peerID) {
@@ -228,17 +227,17 @@ struct ContentView: View {
                 }
             }
             
-            Button("cancel", role: .cancel) {}
+            Button("iptal", role: .cancel) {}
         }
-        .alert("Bluetooth Required", isPresented: $viewModel.showBluetoothAlert) {
-            Button("Settings") {
+        .alert("Bluetooth Gerekli", isPresented: $viewModel.showBluetoothAlert) {
+            Button("Ayarlar") {
                 #if os(iOS)
                 if let url = URL(string: UIApplication.openSettingsURLString) {
                     UIApplication.shared.open(url)
                 }
                 #endif
             }
-            Button("OK", role: .cancel) {}
+            Button("Tamam", role: .cancel) {}
         } message: {
             Text(viewModel.bluetoothAlertMessage)
         }
@@ -319,7 +318,7 @@ struct ContentView: View {
                                     // Expand/Collapse for very long messages
                                     if (message.content.count > TransportConfig.uiLongMessageLengthThreshold || message.content.hasVeryLongToken(threshold: TransportConfig.uiVeryLongTokenThreshold)) && cashuTokens.isEmpty {
                                         let isExpanded = expandedMessageIDs.contains(message.id)
-                                        Button(isExpanded ? "show less" : "show more") {
+                                        Button(isExpanded ? "daha az göster" : "daha fazla göster") {
                                             if isExpanded { expandedMessageIDs.remove(message.id) }
                                             else { expandedMessageIDs.insert(message.id) }
                                         }
@@ -335,7 +334,7 @@ struct ContentView: View {
                                                 let link = lightningLinks[i]
                                                 PaymentChipView(
                                                     emoji: "⚡",
-                                                    label: "pay via lightning",
+                                                    label: "lightning ile öde",
                                                     colorScheme: colorScheme
                                                 ) {
                                                     #if os(iOS)
@@ -351,7 +350,7 @@ struct ContentView: View {
                                                 let urlStr = "cashu:\(enc)"
                                                 PaymentChipView(
                                                     emoji: "🥜",
-                                                    label: "pay via cashu",
+                                                    label: "cashu ile öde",
                                                     colorScheme: colorScheme
                                                 ) {
                                                     #if os(iOS)
@@ -421,7 +420,7 @@ struct ContentView: View {
                             }
                         }
                         .contextMenu {
-                            Button("Copy message") {
+                            Button("Mesajı kopyala") {
                                 #if os(iOS)
                                 UIPasteboard.general.string = message.content
                                 #else
@@ -440,7 +439,7 @@ struct ContentView: View {
             }
             .background(backgroundColor)
             .onOpenURL { url in
-                guard url.scheme == "bitchat", url.host == "user" else { return }
+                guard url.scheme == "bounchat", url.host == "user" else { return }
                 let id = url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/"))
                 let peerID = id.removingPercentEncoding ?? id
                 selectedMessageSenderID = peerID
@@ -448,7 +447,7 @@ struct ContentView: View {
                 showMessageActions = true
             }
             .onOpenURL { url in
-                guard url.scheme == "bitchat", url.host == "geohash" else { return }
+                guard url.scheme == "bounchat", url.host == "geohash" else { return }
                 let gh = url.path.trimmingCharacters(in: CharacterSet(charactersIn: "/")).lowercased()
                 let allowed = Set("0123456789bcdefghjkmnpqrstuvwxyz")
                 guard (2...12).contains(gh.count), gh.allSatisfy({ allowed.contains($0) }) else { return }
@@ -670,6 +669,13 @@ struct ContentView: View {
             return .systemAction
         })
     }
+
+    // MARK: - Helpers
+    private func abbreviateClubName(_ s: String) -> String {
+        var t = s.replacingOccurrences(of: " Kulübü", with: " K.")
+        t = t.replacingOccurrences(of: "Kulübü", with: "K.")
+        return t
+    }
     
     // MARK: - Input View
     
@@ -697,11 +703,21 @@ struct ContentView: View {
                         .background(Color.gray.opacity(0.1))
                     }
                 }
+                .frame(maxHeight: 280)
                 .background(backgroundColor)
                 .overlay(
                     RoundedRectangle(cornerRadius: 4)
                         .stroke(secondaryTextColor.opacity(0.3), lineWidth: 1)
                 )
+                .overlay(alignment: .topTrailing) {
+                    Button(action: { showCommandSuggestions = false; commandSuggestions = [] }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .font(.system(size: 12))
+                            .foregroundColor(secondaryTextColor)
+                            .padding(6)
+                    }
+                    .buttonStyle(.plain)
+                }
                 .padding(.horizontal, 12)
             }
             
@@ -710,10 +726,13 @@ struct ContentView: View {
                 VStack(alignment: .leading, spacing: 0) {
                     // Define commands with aliases and syntax
                     let baseInfo: [(commands: [String], syntax: String?, description: String)] = [
+                        (["/feedback"], nil, "open feedback channel"),
                         (["/block"], "[nickname]", "block or list blocked peers"),
                         (["/clear"], nil, "clear chat messages"),
+                        (["/contact"], nil, "show club email in current channel"),
                         (["/hug"], "<nickname>", "send someone a warm hug"),
                         (["/m", "/msg"], "<nickname> [message]", "send private message"),
+                        (["/mesh", "/home", "/main"], nil, "go to main mesh channel"),
                         (["/slap"], "<nickname>", "slap someone with a trout"),
                         (["/unblock"], "<nickname>", "unblock a peer"),
                         (["/w"], nil, "see who's online")
@@ -725,48 +744,94 @@ struct ContentView: View {
                         (["/unfav"], "<nickname>", "remove from favorites")
                     ]
                     let commandInfo = baseInfo + ((isGeoPublic || isGeoDM) ? [] : favInfo)
-                    
-                    // Build the display
-                    let allCommands = commandInfo
-                    
-                    // Show matching commands
-                    ForEach(commandSuggestions, id: \.self) { command in
-                        // Find the command info for this suggestion
-                        if let info = allCommands.first(where: { $0.commands.contains(command) }) {
-                            Button(action: {
-                                // Replace current text with selected command
-                                messageText = command + " "
-                                showCommandSuggestions = false
-                                commandSuggestions = []
-                            }) {
-                                HStack {
-                                    // Show all aliases together
-                                    Text(info.commands.joined(separator: ", "))
-                                        .font(.system(size: 11, design: .monospaced))
-                                        .foregroundColor(textColor)
-                                        .fontWeight(.medium)
-                                    
-                                    // Show syntax if any
-                                    if let syntax = info.syntax {
-                                        Text(syntax)
+
+                    // Club commands (e.g., /sk → Spor Kurulu)
+                    let clubPairs = viewModel.clubCommandSuggestions()
+                    let clubDict = Dictionary(uniqueKeysWithValues: clubPairs.map { ($0.0, $0.1) })
+                    let clubSet = Set(clubPairs.map { $0.0 })
+
+                    // Split current suggestions into two groups for readability
+                    let commandsShown = commandSuggestions.filter { !clubSet.contains($0) }
+                    let clubsShown = commandSuggestions.filter { clubSet.contains($0) }
+
+                    // name abbreviation handled by helper method
+
+                    // Section: Commands
+                    if !commandsShown.isEmpty {
+                        Text("Commands")
+                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                            .foregroundColor(secondaryTextColor)
+                            .padding(.top, 6)
+                            .padding(.horizontal, 12)
+                        ForEach(commandsShown, id: \.self) { command in
+                            if let info = commandInfo.first(where: { $0.commands.contains(command) }) {
+                                Button(action: {
+                                    messageText = command + " "
+                                    showCommandSuggestions = false
+                                    commandSuggestions = []
+                                }) {
+                                    HStack {
+                                        let isHighlighted = (command == "/feedback") || (command == "/home")
+                                        Text(info.commands.joined(separator: ", "))
+                                            .font(.system(size: 11, design: .monospaced))
+                                            .foregroundColor(isHighlighted ? Color.yellow : textColor)
+                                            .fontWeight(.medium)
+                                        if let syntax = info.syntax {
+                                            Text(syntax)
+                                                .font(.system(size: 10, design: .monospaced))
+                                                .foregroundColor(secondaryTextColor.opacity(0.8))
+                                        }
+                                        Spacer()
+                                        Text(info.description)
                                             .font(.system(size: 10, design: .monospaced))
-                                            .foregroundColor(secondaryTextColor.opacity(0.8))
+                                            .foregroundColor(isHighlighted ? Color.yellow : secondaryTextColor)
                                     }
-                                    
-                                    Spacer()
-                                    
-                                    // Show description
-                                    Text(info.description)
-                                        .font(.system(size: 10, design: .monospaced))
-                                        .foregroundColor(secondaryTextColor)
+                                    .padding(.horizontal, 12)
+                                    .padding(.vertical, 3)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
                                 }
-                                .padding(.horizontal, 12)
-                                .padding(.vertical, 3)
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .buttonStyle(.plain)
+                                .background(((command == "/feedback") || (command == "/home")) ? Color.yellow.opacity(0.1) : Color.gray.opacity(0.1))
                             }
-                            .buttonStyle(.plain)
-                            .background(Color.gray.opacity(0.1))
                         }
+                    }
+
+                    // Section: Student Clubs (two columns)
+                    if !clubsShown.isEmpty {
+                        Text("Student Clubs")
+                            .font(.system(size: 10, weight: .semibold, design: .monospaced))
+                            .foregroundColor(secondaryTextColor)
+                            .padding(.top, 6)
+                            .padding(.horizontal, 12)
+                        let clubCols = [GridItem(.flexible(), spacing: 8), GridItem(.flexible(), spacing: 8)]
+                                LazyVGrid(columns: clubCols, alignment: .leading, spacing: 2) {
+                                    ForEach(clubsShown.sorted(), id: \.self) { command in
+                                        let name = clubDict[command].map { abbreviateClubName($0) } ?? ""
+                                        let isHighlightedClub = (command == "/sk")
+                                        Button(action: {
+                                            messageText = command + " "
+                                            showCommandSuggestions = false
+                                            commandSuggestions = []
+                                        }) {
+                                            HStack {
+                                                Text(command)
+                                                    .font(.system(size: 11, design: .monospaced))
+                                                    .foregroundColor(isHighlightedClub ? Color.yellow : textColor)
+                                                    .fontWeight(.medium)
+                                                Spacer(minLength: 6)
+                                                Text(name)
+                                                    .font(.system(size: 10, design: .monospaced))
+                                                    .foregroundColor(isHighlightedClub ? Color.yellow : secondaryTextColor)
+                                            }
+                                            .padding(.horizontal, 12)
+                                            .padding(.vertical, 3)
+                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
+                                        .buttonStyle(.plain)
+                                        .background(isHighlightedClub ? Color.yellow.opacity(0.1) : Color.gray.opacity(0.1))
+                                    }
+                                }
+                        .padding(.trailing, 6)
                     }
                 }
                 .background(backgroundColor)
@@ -778,7 +843,7 @@ struct ContentView: View {
             }
             
             HStack(alignment: .center, spacing: 4) {
-            TextField("type a message...", text: $messageText)
+            TextField("bir mesaj yazın...", text: $messageText)
                 .textFieldStyle(.plain)
                 .font(.system(size: 14, design: .monospaced))
                 .foregroundColor(textColor)
@@ -805,10 +870,13 @@ struct ContentView: View {
                         }()
                         let isGeoDM: Bool = (viewModel.selectedPrivateChatPeer?.hasPrefix("nostr_") == true)
                         var commandDescriptions = [
+                            ("/feedback", "open feedback channel"),
                             ("/block", "block or list blocked peers"),
                             ("/clear", "clear chat messages"),
+                            ("/contact", "show club email in current channel"),
                             ("/hug", "send someone a warm hug"),
                             ("/m", "send private message"),
+                            ("/mesh", "go to main mesh channel"),
                             ("/slap", "slap someone with a trout"),
                             ("/unblock", "unblock a peer"),
                             ("/w", "see who's online")
@@ -824,8 +892,14 @@ struct ContentView: View {
                         // Map of aliases to primary commands
                         let aliases: [String: String] = [
                             "/join": "/j",
-                            "/msg": "/m"
+                            "/msg": "/m",
+                            "/home": "/mesh",
+                            "/main": "/mesh"
                         ]
+                        
+                        // Add club commands with names
+                        let clubPairs = viewModel.clubCommandSuggestions()
+                        commandDescriptions.append(contentsOf: clubPairs)
                         
                         // Filter commands, but convert aliases to primary
                         commandSuggestions = commandDescriptions
@@ -862,8 +936,8 @@ struct ContentView: View {
             }
             .buttonStyle(.plain)
             .padding(.trailing, 12)
-            .accessibilityLabel("Send message")
-            .accessibilityHint(messageText.isEmpty ? "Enter a message to send" : "Double tap to send")
+            .accessibilityLabel("Mesaj gönder")
+            .accessibilityHint(messageText.isEmpty ? "Göndermek için bir mesaj girin" : "Göndermek için iki kez dokunun")
             }
             .padding(.vertical, 8)
             .background(backgroundColor.opacity(0.95))
@@ -895,19 +969,11 @@ struct ContentView: View {
             VStack(alignment: .leading, spacing: 0) {
                 // Header - match main toolbar height
                 HStack {
-                    Text("PEOPLE")
+                    Text("KİŞİLER")
                         .font(.system(size: 16, weight: .bold, design: .monospaced))
                         .foregroundColor(textColor)
                     Spacer()
-                    // Show QR in mesh on all platforms
-                    if case .mesh = locationManager.selectedChannel {
-                        Button(action: { showVerifySheet = true }) {
-                            Image(systemName: "qrcode")
-                                .font(.system(size: 14))
-                        }
-                        .buttonStyle(.plain)
-                        .help("Verification: show my QR or scan a friend")
-                    }
+                    // QR verification removed
                 }
                 .frame(height: 44) // Match header height
                 .padding(.horizontal, 12)
@@ -1059,7 +1125,7 @@ struct ContentView: View {
     
     private var mainHeaderView: some View {
         HStack(spacing: 0) {
-            Text("bitchat/")
+            Text("bounchat/")
                 .font(.system(size: 18, weight: .medium, design: .monospaced))
                 .foregroundColor(textColor)
                 .onTapGesture(count: 3) {
@@ -1076,7 +1142,7 @@ struct ContentView: View {
                     .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(secondaryTextColor)
                 
-                TextField("nickname", text: $viewModel.nickname)
+                TextField("takma ad", text: $viewModel.nickname)
                     .textFieldStyle(.plain)
                     .font(.system(size: 14, design: .monospaced))
                     .frame(maxWidth: 100)
@@ -1121,7 +1187,7 @@ struct ContentView: View {
                             .foregroundColor(Color.orange)
                     }
                     .buttonStyle(.plain)
-                    .accessibilityLabel("Open unread private chat")
+                    .accessibilityLabel("Okunmamış özel sohbeti aç")
                 }
                 // Bookmark toggle for current geohash (not shown for mesh)
                 if case .location(let ch) = locationManager.selectedChannel {
@@ -1154,7 +1220,7 @@ struct ContentView: View {
                         .lineLimit(1)
                         .fixedSize(horizontal: true, vertical: false)
                         .layoutPriority(2)
-                        .accessibilityLabel("location channels")
+                        .accessibilityLabel("konum kanalları")
                 }
                 .buttonStyle(.plain)
 
@@ -1177,22 +1243,19 @@ struct ContentView: View {
                     sidebarDragOffset = 0
                 }
             }
-            .sheet(isPresented: $showVerifySheet) {
-                VerificationSheetView(isPresented: $showVerifySheet)
-                    .environmentObject(viewModel)
-            }
+            // QR verification removed
         }
         .frame(height: 44)
         .padding(.horizontal, 12)
         .sheet(isPresented: $showLocationChannelsSheet) {
-            LocationChannelsSheet(isPresented: $showLocationChannelsSheet)
+            LocationChannelsSheet(isPresented: $showLocationChannelsSheet, viewModel: viewModel)
                 .onAppear { viewModel.isLocationChannelsSheetPresented = true }
                 .onDisappear { viewModel.isLocationChannelsSheetPresented = false }
         }
-        .alert("heads up", isPresented: $viewModel.showScreenshotPrivacyWarning) {
-            Button("ok", role: .cancel) {}
+        .alert("dikkat", isPresented: $viewModel.showScreenshotPrivacyWarning) {
+            Button("tamam", role: .cancel) {}
         } message: {
-            Text("screenshots of location channels will reveal your location. think before sharing publicly.")
+            Text("konum kanallarının ekran görüntüleri konumunuzu açığa çıkarır. herkese açık paylaşmadan önce düşünün.")
         }
         .background(backgroundColor.opacity(0.95))
     }
@@ -1341,8 +1404,8 @@ struct ContentView: View {
                                 }
                             }
                         }
-                        .accessibilityLabel("Private chat with \(privatePeerNick)")
-                        .accessibilityHint("Tap to view encryption fingerprint")
+                        .accessibilityLabel("\(privatePeerNick) ile özel sohbet")
+                        .accessibilityHint("Şifreleme parmak izini görmek için dokunun")
                     }
                     .buttonStyle(.plain)
                     
@@ -1361,7 +1424,7 @@ struct ContentView: View {
                                 .contentShape(Rectangle())
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel("Back to main chat")
+                        .accessibilityLabel("Ana sohbete dön")
                         
                         Spacer()
                         
@@ -1375,8 +1438,8 @@ struct ContentView: View {
                                     .foregroundColor(viewModel.isFavorite(peerID: headerPeerID) ? Color.yellow : textColor)
                             }
                             .buttonStyle(.plain)
-                            .accessibilityLabel(viewModel.isFavorite(peerID: privatePeerID) ? "Remove from favorites" : "Add to favorites")
-                            .accessibilityHint("Double tap to toggle favorite status")
+                            .accessibilityLabel(viewModel.isFavorite(peerID: privatePeerID) ? "Favorilerden çıkar" : "Favorilere ekle")
+                            .accessibilityHint("Favori durumunu değiştirmek için iki kez dokunun")
                         }
                     }
                 }

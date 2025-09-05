@@ -9,7 +9,7 @@ struct LocationChannelsSheet: View {
     @Binding var isPresented: Bool
     @ObservedObject private var manager = LocationChannelManager.shared
     @ObservedObject private var bookmarks = GeohashBookmarksStore.shared
-    @EnvironmentObject var viewModel: ChatViewModel
+    @ObservedObject var viewModel: ChatViewModel
     @Environment(\.colorScheme) var colorScheme
     @State private var customGeohash: String = ""
     @State private var customError: String? = nil
@@ -17,9 +17,9 @@ struct LocationChannelsSheet: View {
     var body: some View {
         NavigationView {
             VStack(alignment: .leading, spacing: 12) {
-                Text("#location channels")
+                Text("#konum kanalları")
                     .font(.system(size: 18, design: .monospaced))
-                Text("chat with people near you using geohash channels. only a coarse geohash is shared, never exact gps.")
+                Text("geohash kanallarını kullanarak yakınındaki insanlarla sohbet et. sadece kaba geohash paylaşılır, kesinlikle tam gps asla.")
                     .font(.system(size: 12, design: .monospaced))
                     .foregroundColor(.secondary)
 
@@ -27,7 +27,7 @@ struct LocationChannelsSheet: View {
                     switch manager.permissionState {
                     case LocationChannelManager.PermissionState.notDetermined:
                         Button(action: { manager.enableLocationChannels() }) {
-                            Text("get location and my geohashes")
+                            Text("konum al ve benim geohashlarım")
                                 .font(.system(size: 12, design: .monospaced))
                                 .foregroundColor(standardGreen)
                                 .frame(maxWidth: .infinity)
@@ -38,10 +38,10 @@ struct LocationChannelsSheet: View {
                         .buttonStyle(.plain)
                     case LocationChannelManager.PermissionState.denied, LocationChannelManager.PermissionState.restricted:
                         VStack(alignment: .leading, spacing: 8) {
-                            Text("location permission denied. enable in settings to use location channels.")
+                            Text("konum izni reddedildi. konum kanallarını kullanmak için ayarlardan etkinleştirin.")
                                 .font(.system(size: 12, design: .monospaced))
                                 .foregroundColor(.secondary)
-                            Button("open settings") { openSystemLocationSettings() }
+                            Button("ayarları aç") { openSystemLocationSettings() }
                             .buttonStyle(.plain)
                         }
                     case LocationChannelManager.PermissionState.authorized:
@@ -58,14 +58,14 @@ struct LocationChannelsSheet: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("close") { isPresented = false }
+                    Button("kapat") { isPresented = false }
                         .font(.system(size: 14, design: .monospaced))
                 }
             }
             #else
             .toolbar {
                 ToolbarItem(placement: .automatic) {
-                    Button("close") { isPresented = false }
+                    Button("kapat") { isPresented = false }
                         .font(.system(size: 14, design: .monospaced))
                 }
             }
@@ -137,7 +137,7 @@ struct LocationChannelsSheet: View {
             } else {
                 HStack {
                     ProgressView()
-                    Text("finding nearby channels…")
+                    Text("yakındaki kanallar bulunuyor…")
                         .font(.system(size: 12, design: .monospaced))
                 }
             }
@@ -181,7 +181,7 @@ struct LocationChannelsSheet: View {
                         isPresented = false
                     }) {
                         HStack(spacing: 6) {
-                            Text("teleport")
+                            Text("ışınlan")
                                 .font(.system(size: 14, design: .monospaced))
                             Image(systemName: "face.dashed")
                                 .font(.system(size: 14))
@@ -206,7 +206,7 @@ struct LocationChannelsSheet: View {
             // Bookmarked geohashes
             if !bookmarks.bookmarks.isEmpty {
                 VStack(alignment: .leading, spacing: 6) {
-                    Text("bookmarked")
+                    Text("yer imli")
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundColor(.secondary)
                 }
@@ -250,7 +250,7 @@ struct LocationChannelsSheet: View {
                 Button(action: {
                     openSystemLocationSettings()
                 }) {
-                    Text("remove location access")
+                    Text("konum erişimini kaldır")
                         .font(.system(size: 12, design: .monospaced))
                         .foregroundColor(Color(red: 0.75, green: 0.1, blue: 0.1))
                         .frame(maxWidth: .infinity)
@@ -341,7 +341,7 @@ struct LocationChannelsSheet: View {
     private func meshTitleWithCount() -> String {
         // Count currently connected mesh peers (excluding self)
         let meshCount = meshCount()
-        let noun = meshCount == 1 ? "person" : "people"
+        let noun = meshCount == 1 ? "kişi" : "kişi"
         return "mesh [\(meshCount) \(noun)]"
     }
 
@@ -357,14 +357,14 @@ struct LocationChannelsSheet: View {
     private func geohashTitleWithCount(for channel: GeohashChannel) -> String {
         // Main list: keep level labels (block/neighborhood/city/province/region)
         let count = viewModel.geohashParticipantCount(for: channel.geohash)
-        let noun = count == 1 ? "person" : "people"
+        let noun = count == 1 ? "kişi" : "kişi"
         return "\(channel.level.displayName.lowercased()) [\(count) \(noun)]"
     }
 
     private func geohashHashTitleWithCount(_ geohash: String) -> String {
         // Bookmarked list: show the #geohash as the main label
         let count = viewModel.geohashParticipantCount(for: geohash)
-        let noun = count == 1 ? "person" : "people"
+        let noun = count == 1 ? "kişi" : "kişi"
         return "#\(geohash) [\(count) \(noun)]"
     }
 

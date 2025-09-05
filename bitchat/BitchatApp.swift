@@ -1,6 +1,6 @@
 //
 // BitchatApp.swift
-// bitchat
+// anadoluchat
 //
 // This is free and unencumbered software released into the public domain.
 // For more information, see <https://unlicense.org>
@@ -10,7 +10,7 @@ import SwiftUI
 import UserNotifications
 
 @main
-struct BitchatApp: App {
+struct AnadoluchatApp: App {
     @StateObject private var chatViewModel = ChatViewModel()
     #if os(iOS)
     @Environment(\.scenePhase) var scenePhase
@@ -28,16 +28,11 @@ struct BitchatApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .preferredColorScheme(.dark)
                 .environmentObject(chatViewModel)
                 .onAppear {
                     NotificationDelegate.shared.chatViewModel = chatViewModel
-                    // Inject live Noise service into VerificationService to avoid creating new BLE instances
-                    VerificationService.shared.configure(with: chatViewModel.meshService.getNoiseService())
-                    // Prewarm Nostr identity and QR to make first VERIFY sheet fast
-                    DispatchQueue.global(qos: .utility).async {
-                        let npub = try? NostrIdentityBridge.getCurrentNostrIdentity()?.npub
-                        _ = VerificationService.shared.buildMyQRString(nickname: chatViewModel.nickname, npub: npub)
-                    }
+                    // QR verification removed
                     #if os(iOS)
                     appDelegate.chatViewModel = chatViewModel
                     #elseif os(macOS)
@@ -82,7 +77,7 @@ struct BitchatApp: App {
     }
     
     private func handleURL(_ url: URL) {
-        if url.scheme == "bitchat" && url.host == "share" {
+        if url.scheme == "bounchat" && url.host == "share" {
             // Handle shared content
             checkForSharedContent()
         }
@@ -90,7 +85,7 @@ struct BitchatApp: App {
     
     private func checkForSharedContent() {
         // Check app group for shared content from extension
-        guard let userDefaults = UserDefaults(suiteName: "group.chat.bitchat") else {
+        guard let userDefaults = UserDefaults(suiteName: "group.capish.testiPad5") else {
             return
         }
         

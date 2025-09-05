@@ -21,6 +21,63 @@ class CommandProcessor {
     weak var chatViewModel: ChatViewModel?
     weak var meshService: Transport?
     
+    // Student club directory: abbreviation -> (human name, email?)
+    // Abbreviations are matched case-insensitively; diacritics and punctuation are ignored.
+    private let clubDirectory: [String: (name: String, email: String?)] = [
+        // Core examples
+        "sk": ("Spor Kurulu", "sporkurulu@bogazici.edu.tr"),
+        // Full list (normalized ASCII lowercase keys)
+        "adk": ("Atatürkçü Düşünce Kulübü", "adk@bogazici.edu.tr"),
+        "bubk": ("Bilim Kulübü", "bilimkulubu@bogazici.edu.tr"),
+        "compec": ("Bilişim Kulübü (Compec)", "compec@bogazici.edu.tr"),
+        "bric": ("Briç Kulübü", "bric@bogazici.edu.tr"),
+        "bucev": ("Çeviri Kulübü", "bucev@bogazici.edu.tr"),
+        "bucek": ("Çevre Kulübü", "bucek@bogazici.edu.tr"),
+        "budak": ("Dağcılık Kulübü", "budak@bogazici.edu.tr"),
+        "budans": ("Dans Kulübü", "budans@bogazici.edu.tr"),
+        "budav": ("Davranış Bilimleri Kulübü (Aday)", "budav@bogazici.edu.tr"),
+        "buyelken": ("Denizcilik ve Yelkencilik Kulübü (Aday)", "buyelken@bogazici.edu.tr"),
+        "bued": ("Edebiyat Kulübü", "bued@bogazici.edu.tr"),
+        "erec": ("Eğitim Araştırma Kulübü", "erec@bogazici.edu.tr"),
+        "buec": ("Elektro Teknoloji Kulübü", "buec@bogazici.edu.tr"),
+        "bufk": ("Folklor Kulübü", "bufk@bogazici.edu.tr"),
+        "bufok": ("Fotoğrafçılık Kulübü", "bufok@bogazici.edu.tr"),
+        "bugusto": ("Gastronomi ve Degüstasyon Kulübü", "bugusto@bogazici.edu.tr"),
+        "buok": ("Gerçek Macera Oyunları Kulübü", "buok@bogazici.edu.tr"),
+        "gsk": ("Güzel Sanatlar Kulübü", "gsk@bogazici.edu.tr"),
+        "buhak": ("Havacılık Kulübü", "buhak@bogazici.edu.tr"),
+        "bisak": ("İslam Araştırmaları Kulübü (Aday)", "bisak@bogazici.edu.tr"),
+        "buik": ("İşletme ve Ekonomi Kulübü", nil),
+        "bukak": ("Kadın Araştırma Kulübü", "bukak@bogazici.edu.tr"),
+        "bukomik": ("Karikatür ve Mizah Kulübü", "bukomik@bogazici.edu.tr"),
+        "koykoop": ("Köy‑Koop Kulübü", "koykoop@bogazici.edu.tr"),
+        "bumak": ("Mağara Araştırma Kulübü", "bumak@bogazici.edu.tr"),
+        "bumatek": ("Makine Teknoloji Kulübü", "bumatek@bogazici.edu.tr"),
+        "enso": ("Mühendislik Kulübü", "enso@bogazici.edu.tr"),
+        "buds": ("Münazara Kulübü", "buds@bogazici.edu.tr"),
+        "bumk": ("Müzik Kulübü", "bumk@bogazici.edu.tr"),
+        "radyo": ("Radyo Boğaziçi", "radyobogazici@bogazici.edu.tr"),
+        "satranc": ("Satranç Kulübü", "satranc@bogazici.edu.tr"),
+        "busk": ("Sinema Kulübü", "sinema@bogazici.edu.tr"),
+        "busuik": ("Siyasal Bilimler ve Uluslararası İlişkiler Kulübü", "busuik@bogazici.edu.tr"),
+        "sbk": ("Sosyal Bilimler Kulübü", "sbk@bogazici.edu.tr"),
+        "busos": ("Sosyal Hizmet Kulübü", "busos@bogazici.edu.tr"),
+        "busas": ("Sualtı Sporları Kulübü", "busas@bogazici.edu.tr"),
+        "butik": ("Tarih İncelemeleri Kulübü", "butik@bogazici.edu.tr"),
+        "buo": ("Tiyatro Kulübü", "buo@bogazici.edu.tr"),
+        "butak": ("Türk Araştırmaları Kulübü", "butak.2015@bogazici.edu.tr"),
+        "bunis": ("Uluslararası Öğrenci Ağı Kulübü", "bunis@bogazici.edu.tr"),
+        "buyap": ("Yapı Kulübü", "buyap@bogazici.edu.tr"),
+        "buyak": ("Yöneylem Araştırma Kulübü", "buyak@bogazici.edu.tr")
+    ]
+
+    // Expose club commands for UI helpers
+    func availableClubCommands() -> [(String, String)] {
+        clubDirectory
+            .map { ("/\($0.key)", $0.value.name) }
+            .sorted { $0.0 < $1.0 }
+    }
+    
     init(chatViewModel: ChatViewModel? = nil, meshService: Transport? = nil) {
         self.chatViewModel = chatViewModel
         self.meshService = meshService
@@ -32,6 +89,7 @@ class CommandProcessor {
         let parts = command.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)
         guard let cmd = parts.first else { return .error(message: "Invalid command") }
         let args = parts.count > 1 ? String(parts[1]) : ""
+        let token = String(cmd).lowercased()
         
         // Geohash context: disable favoriting in public geohash or GeoDM
         let inGeoPublic: Bool = {
@@ -42,13 +100,24 @@ class CommandProcessor {
         }()
         let inGeoDM = (chatViewModel?.selectedPrivateChatPeer?.hasPrefix("nostr_") == true)
 
-        switch cmd {
+        // Club shortcuts: "/sk", "/adk", etc.
+        if let abbr = clubAbbreviation(from: token) {
+            return handleClubSwitch(abbr)
+        }
+
+        switch token {
+        case "/feedback":
+            return handleFeedback()
+        case "/mesh", "/home", "/main":
+            return handleGoMesh()
         case "/m", "/msg":
             return handleMessage(args)
         case "/w", "/who":
             return handleWho()
         case "/clear":
             return handleClear()
+        case "/contact":
+            return handleContact()
         case "/hug":
             return handleEmote(args, action: "hugs", emoji: "🫂")
         case "/slap":
@@ -72,6 +141,88 @@ class CommandProcessor {
     }
     
     // MARK: - Command Handlers
+    
+    private func normalize(_ s: String) -> String {
+        let folded = s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
+        let filtered = folded.unicodeScalars.filter { CharacterSet.alphanumerics.contains($0) }
+        return String(String.UnicodeScalarView(filtered)).lowercased()
+    }
+
+    private func clubAbbreviation(from token: String) -> String? {
+        guard token.hasPrefix("/") else { return nil }
+        let bare = String(token.dropFirst())
+        let key = normalize(bare)
+        return clubDirectory[key] != nil ? key : nil
+    }
+
+    private func handleClubSwitch(_ abbr: String) -> CommandResult {
+        // Choose a reasonable level based on pseudo-"geohash" length
+        func level(for len: Int) -> GeohashChannelLevel {
+            switch len {
+            case 0...2: return .region
+            case 3...4: return .province
+            case 5: return .city
+            case 6: return .neighborhood
+            default: return .block
+            }
+        }
+        let ch = GeohashChannel(level: level(for: abbr.count), geohash: abbr)
+        // Mark as teleported if not in regional suggestions
+        let inRegional = LocationChannelManager.shared.availableChannels.contains { $0.geohash == abbr }
+        if !inRegional && !LocationChannelManager.shared.availableChannels.isEmpty {
+            LocationChannelManager.shared.markTeleported(for: abbr, true)
+        }
+        LocationChannelManager.shared.select(.location(ch))
+        if let info = clubDirectory[abbr] {
+            let suffix = info.email != nil ? " — /contact" : ""
+            return .success(message: "kanal: #\(abbr) (\(info.name))\(suffix)")
+        } else {
+            return .success(message: "kanal: #\(abbr)")
+        }
+    }
+
+    private func handleContact() -> CommandResult {
+        switch LocationChannelManager.shared.selectedChannel {
+        case .mesh:
+            return .error(message: "not in a club channel — use /<kısaltma> first")
+        case .location(let ch):
+            let key = normalize(ch.geohash)
+            if let info = clubDirectory[key] {
+                if let email = info.email {
+                    return .success(message: "iletisim: \(email)")
+                } else {
+                    return .success(message: "iletişim e‑postası bulunamadı")
+                }
+            } else {
+                return .error(message: "not a recognized club channel")
+            }
+        }
+    }
+
+    private func handleGoMesh() -> CommandResult {
+        LocationChannelManager.shared.select(.mesh)
+        return .success(message: "kanal: #mesh")
+    }
+
+    private func handleFeedback() -> CommandResult {
+        let key = "feedback"
+        func level(for len: Int) -> GeohashChannelLevel {
+            switch len {
+            case 0...2: return .region
+            case 3...4: return .province
+            case 5: return .city
+            case 6: return .neighborhood
+            default: return .block
+            }
+        }
+        let ch = GeohashChannel(level: level(for: key.count), geohash: key)
+        let inRegional = LocationChannelManager.shared.availableChannels.contains { $0.geohash == key }
+        if !inRegional && !LocationChannelManager.shared.availableChannels.isEmpty {
+            LocationChannelManager.shared.markTeleported(for: key, true)
+        }
+        LocationChannelManager.shared.select(.location(ch))
+        return .success(message: "kanal: #feedback")
+    }
     
     private func handleMessage(_ args: String) -> CommandResult {
         let parts = args.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: false)

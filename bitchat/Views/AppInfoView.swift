@@ -18,41 +18,41 @@ struct AppInfoView: View {
     
     // MARK: - Constants
     private enum Strings {
-        static let appName = "bitchat"
-        static let tagline = "sidegroupchat"
+    static let appName = "bounchat"
+        static let tagline = "yan grup sohbeti"
         
         enum Features {
-            static let title = "FEATURES"
-            static let offlineComm = ("wifi.slash", "offline communication", "works without internet using Bluetooth low energy")
-            static let encryption = ("lock.shield", "end-to-end encryption", "private messages encrypted with noise protocol")
-            static let extendedRange = ("antenna.radiowaves.left.and.right", "extended range", "messages relay through peers, going the distance")
-            static let mentions = ("at", "mentions", "use @nickname to notify specific people")
-            static let favorites = ("star.fill", "favorites", "get notified when your favorite people join")
-            static let geohash = ("number", "local channels", "geohash channels to chat with people in nearby regions over decentralized anonymous relays")
+            static let title = "ÖZELLİKLER"
+            static let offlineComm = ("wifi.slash", "çevrimdışı iletişim", "Bluetooth düşük enerji kullanarak internet olmadan çalışır")
+            static let encryption = ("lock.shield", "uçtan uca şifreleme", "özel mesajlar noise protokolü ile şifrelenir")
+            static let extendedRange = ("antenna.radiowaves.left.and.right", "genişletilmiş menzil", "mesajlar eşler arasında aktarılarak uzağa ulaşır")
+            static let mentions = ("at", "bahsetmeler", "belirli kişileri bilgilendirmek için @takmaad kullanın")
+            static let favorites = ("star.fill", "favoriler", "favori kişileriniz katıldığında bildirim alın")
+            static let geohash = ("number", "yerel kanallar", "merkezi olmayan anonim aktarıcılar üzerinden yakındaki bölgelerdeki insanlarla sohbet etmek için geohash kanalları")
         }
         
         enum Privacy {
-            static let title = "PRIVACY"
-            static let noTracking = ("eye.slash", "no tracking", "no servers, accounts, or data collection")
-            static let ephemeral = ("shuffle", "ephemeral identity", "new peer ID generated regularly")
-            static let panic = ("hand.raised.fill", "panic mode", "triple-tap logo to instantly clear all data")
+            static let title = "GİZLİLİK"
+            static let noTracking = ("eye.slash", "izleme yok", "sunucu, hesap veya veri toplama yoktur")
+            static let ephemeral = ("shuffle", "geçici kimlik", "düzenli olarak yeni eş kimliği oluşturulur")
+            static let panic = ("hand.raised.fill", "panik modu", "tüm verileri anında temizlemek için logoya üç kez dokunun")
         }
         
         enum HowToUse {
-            static let title = "HOW TO USE"
+            static let title = "NASIL KULLANILIR"
             static let instructions = [
-                "• set your nickname by tapping it",
-                "• tap #mesh to change channels",
-                "• tap people icon for sidebar",
-                "• tap a peer's name to start a DM",
-                "• triple-tap chat to clear",
-                "• type / for commands"
+                "• takma adınızı dokunarak ayarlayın",
+                "• kanalları değiştirmek için #mesh'e dokunun",
+                "• kenar çubuğu için kişiler simgesine dokunun",
+                "• DM başlatmak için bir eşin adına dokunun",
+                "• temizlemek için sohbete üç kez dokunun",
+                "• komutlar için / yazın"
             ]
         }
         
         enum Warning {
-            static let title = "WARNING"
-            static let message = "private message security has not yet been fully audited. do not use for critical situations until this warning disappears."
+            static let title = "UYARI"
+            static let message = "özel mesaj güvenliği henüz tam olarak denetlenmemiştir. bu uyarı kaybolana kadar kritik durumlar için kullanmayın."
         }
     }
     
@@ -62,7 +62,7 @@ struct AppInfoView: View {
             // Custom header for macOS
             HStack {
                 Spacer()
-                Button("DONE") {
+                Button("BİTTİ") {
                     dismiss()
                 }
                 .buttonStyle(.plain)
@@ -86,7 +86,7 @@ struct AppInfoView: View {
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("close") {
+                    Button("kapat") {
                         dismiss()
                     }
                     .foregroundColor(textColor)

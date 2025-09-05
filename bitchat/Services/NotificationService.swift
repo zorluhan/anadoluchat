@@ -1,6 +1,6 @@
 //
 // NotificationService.swift
-// bitchat
+// anadoluchat
 //
 // This is free and unencumbered software released into the public domain.
 // For more information, see <https://unlicense.org>
@@ -94,13 +94,13 @@ class NotificationService {
     func sendGeohashActivityNotification(geohash: String, titlePrefix: String = "#", bodyPreview: String) {
         let title = "\(titlePrefix)\(geohash)"
         let identifier = "geo-activity-\(geohash)-\(Date().timeIntervalSince1970)"
-        let deeplink = "bitchat://geohash/\(geohash)"
+        let deeplink = "bounchat://geohash/\(geohash)"
         let userInfo: [String: Any] = ["deeplink": deeplink]
         sendLocalNotification(title: title, body: bodyPreview, identifier: identifier, userInfo: userInfo)
     }
 
     func sendNetworkAvailableNotification(peerCount: Int) {
-        let title = "👥 bitchatters nearby!"
+        let title = "👥 bounchatters nearby!"
         let body = peerCount == 1 ? "1 person around" : "\(peerCount) people around"
         let identifier = "network-available-\(Date().timeIntervalSince1970)"
         

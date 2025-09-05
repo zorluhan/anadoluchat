@@ -15,12 +15,12 @@ struct MyQRView: View {
 
     var body: some View {
         VStack(spacing: 12) {
-            Text("scan to verify me")
+            Text("beni doğrulamak için tara")
                 .font(.system(size: 16, weight: .bold, design: .monospaced))
 
             VStack(spacing: 10) {
                 QRCodeImage(data: qrString, size: 240)
-                    .accessibilityLabel("verification qr code")
+                    .accessibilityLabel("doğrulama qr kodu")
 
                 // Non-scrolling, fully visible URL (wraps across lines)
                 Text(qrString)
@@ -59,7 +59,7 @@ struct QRCodeImage: View {
                     .stroke(Color.gray.opacity(0.5), lineWidth: 1)
                     .frame(width: size, height: size)
                     .overlay(
-                        Text("qr unavailable")
+                        Text("qr mevcut değil")
                             .font(.system(size: 12, design: .monospaced))
                             .foregroundColor(.gray)
                     )
@@ -118,17 +118,17 @@ struct QRScanView: View {
             .frame(height: 260)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             #else
-            Text("paste qr content to validate:")
+            Text("doğrulamak için qr içeriğini yapıştır:")
                 .font(.system(size: 14, weight: .medium, design: .monospaced))
             TextEditor(text: $input)
                 .frame(height: 100)
                 .border(Color.gray.opacity(0.4))
-            Button("validate") {
+            Button("doğrula") {
                 if let qr = VerificationService.shared.verifyScannedQR(input) {
                     let ok = viewModel.beginQRVerification(with: qr)
-                    result = ok ? "verification requested for \(qr.nickname)" : "could not find matching peer"
+                    result = ok ? "\(qr.nickname) için doğrulama istendi" : "eşleşen eş bulunamadı"
                 } else {
-                    result = "invalid or expired qr payload"
+                    result = "geçersiz veya süresi dolmuş qr içeriği"
                 }
             }
             .buttonStyle(.bordered)
@@ -254,7 +254,7 @@ struct VerificationSheetView: View {
         VStack(spacing: 0) {
             // Top header (always at top)
             HStack {
-                Text("VERIFY")
+                Text("DOĞRULA")
                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                     .foregroundColor(accentColor)
                 Spacer()
@@ -278,7 +278,7 @@ struct VerificationSheetView: View {
             Group {
                 if showingScanner {
                     VStack(alignment: .leading, spacing: 12) {
-                        Text("scan a friend's qr")
+                        Text("bir arkadaşın qr'unu tara")
                             .font(.system(size: 16, weight: .bold, design: .monospaced))
                             .frame(maxWidth: .infinity)
                             .multilineTextAlignment(.center)
@@ -309,13 +309,13 @@ struct VerificationSheetView: View {
             VStack(spacing: 10) {
                 if showingScanner {
                     Button(action: { showingScanner = false }) {
-                        Label("show my qr", systemImage: "qrcode")
+                        Label("benim qr'umu göster", systemImage: "qrcode")
                             .font(.system(size: 13, design: .monospaced))
                     }
                     .buttonStyle(.bordered)
                 } else {
                     Button(action: { showingScanner = true }) {
-                        Label("scan someone else's qr", systemImage: "camera.viewfinder")
+                        Label("başkasının qr'unu tara", systemImage: "camera.viewfinder")
                             .font(.system(size: 13, weight: .medium, design: .monospaced))
                     }
                     .buttonStyle(.bordered)
@@ -327,7 +327,7 @@ struct VerificationSheetView: View {
                    let fp = viewModel.getFingerprint(for: pid),
                    viewModel.verifiedFingerprints.contains(fp) {
                     Button(action: { viewModel.unverifyFingerprint(for: pid) }) {
-                        Label("remove verification", systemImage: "minus.circle")
+                        Label("doğrulamayı kaldır", systemImage: "minus.circle")
                             .font(.system(size: 12, design: .monospaced))
                     }
                     .buttonStyle(.bordered)

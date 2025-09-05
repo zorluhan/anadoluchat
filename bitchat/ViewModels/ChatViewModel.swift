@@ -1,6 +1,6 @@
 //
 // ChatViewModel.swift
-// bitchat
+// anadoluchat
 //
 // This is free and unencumbered software released into the public domain.
 // For more information, see <https://unlicense.org>
@@ -3177,7 +3177,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
             let fontWeight: Font.Weight = isSelf ? .bold : .medium
             senderStyle.font = .system(size: 14, weight: fontWeight, design: .monospaced)
             // Make sender clickable: encode senderPeerID into a custom URL
-            if let spid = message.senderPeerID, let url = URL(string: "bitchat://user/\(spid.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? spid)") {
+            if let spid = message.senderPeerID, let url = URL(string: "bounchat://user/\(spid.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? spid)") {
                 senderStyle.link = url
             }
 
@@ -3354,7 +3354,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
                     } else {
                         // Style non-mention matches
                         if type == "hashtag" {
-                            // If the hashtag is a valid geohash, make it tappable (bitchat://geohash/<gh>)
+                            // If the hashtag is a valid geohash, make it tappable (bounchat://geohash/<gh>)
                             let token = String(matchText.dropFirst()).lowercased()
                             let allowed = Set("0123456789bcdefghjkmnpqrstuvwxyz")
                             let isGeohash = (2...12).contains(token.count) && token.allSatisfy { allowed.contains($0) }
@@ -3385,7 +3385,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
                                 ? .system(size: 14, weight: .bold, design: .monospaced)
                                 : .system(size: 14, design: .monospaced)
                             tagStyle.foregroundColor = baseColor
-                            if isGeohash && !attachedToMention && standalone, let url = URL(string: "bitchat://geohash/\(token)") {
+                            if isGeohash && !attachedToMention && standalone, let url = URL(string: "bounchat://geohash/\(token)") {
                                 tagStyle.link = url
                                 tagStyle.underlineStyle = .single
                             }
@@ -4311,6 +4311,13 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
             break
         }
     }
+
+    // MARK: - Command UI Helpers
+    
+    @MainActor
+    func clubCommandSuggestions() -> [(String, String)] {
+        return commandProcessor.availableClubCommands()
+    }
     
     // MARK: - Message Reception
     
@@ -4615,7 +4622,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
             // Clean up stale unread peer IDs whenever peer list updates
             self.cleanupStaleUnreadPeerIDs()
             
-            // Smart notification logic for "bitchatters nearby"
+            // Smart notification logic for "bounchatters nearby"
             if !peers.isEmpty {
                 // Cancel any pending reset if peers are back
                 self.networkResetTimer?.invalidate()
@@ -4633,8 +4640,8 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
                     self.lastNetworkNotificationTime = Date()
                     self.recentlySeenPeers = currentPeerSet
                     NotificationService.shared.sendNetworkAvailableNotification(peerCount: meshPeers.count)
-                    SecureLogger.log("👥 Sent bitchatters nearby notification for \(meshPeers.count) mesh peers", 
-                                   category: SecureLogger.session, level: .info)
+                    SecureLogger.log("👥 Sent bounchatters nearby notification for \(meshPeers.count) mesh peers", 
+                                      category: SecureLogger.session, level: .info)
                 }
             } else {
                 // No peers — immediately reset to allow next rising-edge to notify

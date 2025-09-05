@@ -1,6 +1,6 @@
 //
 // FingerprintView.swift
-// bitchat
+// anadoluchat
 //
 // This is free and unencumbered software released into the public domain.
 // For more information, see <https://unlicense.org>
@@ -26,7 +26,7 @@ struct FingerprintView: View {
         VStack(spacing: 20) {
             // Header
             HStack {
-                Text("SECURITY VERIFICATION")
+                Text("GÜVENLİK DOĞRULAMA")
                     .font(.system(size: 16, weight: .bold, design: .monospaced))
                     .foregroundColor(textColor)
                 
@@ -88,7 +88,7 @@ struct FingerprintView: View {
                 
                 // Their fingerprint
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("THEIR FINGERPRINT:")
+                    Text("ONLARIN PARMAK İZİ:")
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
                         .foregroundColor(textColor.opacity(0.7))
                     
@@ -104,7 +104,7 @@ struct FingerprintView: View {
                             .background(Color.gray.opacity(0.1))
                             .cornerRadius(8)
                             .contextMenu {
-                                Button("Copy") {
+                                Button("Kopyala") {
                                     #if os(iOS)
                                     UIPasteboard.general.string = fingerprint
                                     #else
@@ -114,7 +114,7 @@ struct FingerprintView: View {
                                 }
                             }
                     } else {
-                        Text("not available - handshake in progress")
+                        Text("mevcut değil - el sıkışma devam ediyor")
                             .font(.system(size: 14, design: .monospaced))
                             .foregroundColor(Color.orange)
                             .padding()
@@ -123,7 +123,7 @@ struct FingerprintView: View {
                 
                 // My fingerprint
                 VStack(alignment: .leading, spacing: 8) {
-                    Text("YOUR FINGERPRINT:")
+                    Text("SİZİN PARMAK İZİNİZ:")
                         .font(.system(size: 12, weight: .bold, design: .monospaced))
                         .foregroundColor(textColor.opacity(0.7))
                     
@@ -139,7 +139,7 @@ struct FingerprintView: View {
                         .background(Color.gray.opacity(0.1))
                         .cornerRadius(8)
                         .contextMenu {
-                            Button("Copy") {
+                            Button("Kopyala") {
                                 #if os(iOS)
                                 UIPasteboard.general.string = myFingerprint
                                 #else
@@ -155,14 +155,14 @@ struct FingerprintView: View {
                     let isVerified = encryptionStatus == .noiseVerified
                     
                     VStack(spacing: 12) {
-                        Text(isVerified ? "✓ VERIFIED" : "⚠️ NOT VERIFIED")
+                        Text(isVerified ? "✓ DOĞRULANDI" : "⚠️ DOĞRULANMADI")
                             .font(.system(size: 14, weight: .bold, design: .monospaced))
                             .foregroundColor(isVerified ? Color.green : Color.orange)
                             .frame(maxWidth: .infinity)
                         
                         Text(isVerified ? 
-                             "you have verified this person's identity." :
-                             "compare these fingerprints with \(peerNickname) using a secure channel.")
+                             "bu kişinin kimliğini doğruladınız." :
+                             "bu parmak izlerini \(peerNickname) ile güvenli bir kanal kullanarak karşılaştırın.")
                             .font(.system(size: 12, design: .monospaced))
                             .foregroundColor(textColor.opacity(0.7))
                             .multilineTextAlignment(.center)
@@ -175,7 +175,7 @@ struct FingerprintView: View {
                                 viewModel.verifyFingerprint(for: peerID)
                                 dismiss()
                             }) {
-                                Text("MARK AS VERIFIED")
+                                Text("DOĞRULANDI OLARAK İŞARETLE")
                                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 20)
@@ -189,7 +189,7 @@ struct FingerprintView: View {
                                 viewModel.unverifyFingerprint(for: peerID)
                                 dismiss()
                             }) {
-                                Text("REMOVE VERIFICATION")
+                                Text("DOĞRULAMAYI KALDIR")
                                     .font(.system(size: 14, weight: .bold, design: .monospaced))
                                     .foregroundColor(.white)
                                     .padding(.horizontal, 20)

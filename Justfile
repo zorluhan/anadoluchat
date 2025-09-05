@@ -52,12 +52,13 @@ generate: patch-for-macos
 # Build the macOS app
 build: check generate
     @echo "Building BitChat for macOS..."
-    @xcodebuild -project bitchat.xcodeproj -scheme "bitchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
+    @xcodebuild -project bitchat.xcodeproj -scheme "bounchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
 
 # Run the macOS app
 run: build
     @echo "Launching BitChat..."
-    @find ~/Library/Developer/Xcode/DerivedData -name "bitchat.app" -path "*/Debug/*" -not -path "*/Index.noindex/*" | head -1 | xargs -I {} open "{}"
+    @APP=$(find ~/Library/Developer/Xcode/DerivedData -name "*.app" -path "*/Debug/*" -not -path "*/Index.noindex/*" | egrep -i "/(bounchat|anadoluchat|bitchat)\\.app$" | head -1); \
+    if [ -n "$APP" ]; then open "$APP"; else echo "⚠️ No built .app found in Debug"; fi
 
 # Clean build artifacts and restore original files
 clean: restore
@@ -77,8 +78,9 @@ dev-run: check
     @echo "Quick development build..."
     @if [ ! -f project.yml.backup ]; then just patch-for-macos; fi
     @xcodegen generate
-    @xcodebuild -project bitchat.xcodeproj -scheme "bitchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
-    @find ~/Library/Developer/Xcode/DerivedData -name "bitchat.app" -path "*/Debug/*" -not -path "*/Index.noindex/*" | head -1 | xargs -I {} open "{}"
+    @xcodebuild -project bitchat.xcodeproj -scheme "bounchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
+    @APP=$(find ~/Library/Developer/Xcode/DerivedData -name "*.app" -path "*/Debug/*" -not -path "*/Index.noindex/*" | egrep -i "/(bounchat|anadoluchat|bitchat)\\.app$" | head -1); \
+    if [ -n "$APP" ]; then open "$APP"; else echo "⚠️ No built .app found in Debug"; fi
 
 # Show app info
 info:

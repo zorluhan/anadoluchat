@@ -11,7 +11,7 @@ struct GeohashPeopleList: View {
     var body: some View {
         if viewModel.visibleGeohashPeople().isEmpty {
             VStack(alignment: .leading, spacing: 0) {
-                Text("nobody around...")
+                Text("etrafta kimse yok...")
                     .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(secondaryTextColor)
                     .padding(.horizontal)
@@ -66,7 +66,7 @@ struct GeohashPeopleList: View {
                                     .foregroundColor(suffixColor)
                             }
                             if isMe {
-                                Text(" (you)")
+                                Text(" (sen)")
                                     .font(.system(size: 14, design: .monospaced))
                                     .foregroundColor(rowColor)
                             }
@@ -76,7 +76,7 @@ struct GeohashPeopleList: View {
                                 Image(systemName: "nosign")
                                     .font(.system(size: 10))
                                     .foregroundColor(.red)
-                                    .help("Blocked in geochash")
+                                    .help("Geohash'te engellendi")
                             }
                         }
                         Spacer()
@@ -97,9 +97,9 @@ struct GeohashPeopleList: View {
                         } else {
                             let blocked = viewModel.isGeohashUserBlocked(pubkeyHexLowercased: person.id)
                             if blocked {
-                                Button("Unblock") { viewModel.unblockGeohashUser(pubkeyHexLowercased: person.id, displayName: person.displayName) }
+                                Button("Engeli Kaldır") { viewModel.unblockGeohashUser(pubkeyHexLowercased: person.id, displayName: person.displayName) }
                             } else {
-                                Button("Block") { viewModel.blockGeohashUser(pubkeyHexLowercased: person.id, displayName: person.displayName) }
+                                Button("Engelle") { viewModel.blockGeohashUser(pubkeyHexLowercased: person.id, displayName: person.displayName) }
                             }
                         }
                     }

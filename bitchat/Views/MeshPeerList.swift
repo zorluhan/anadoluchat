@@ -14,7 +14,7 @@ struct MeshPeerList: View {
     var body: some View {
         if viewModel.allPeers.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
-                Text("nobody around...")
+                Text("etrafta kimse yok...")
                     .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(secondaryTextColor)
                     .padding(.horizontal)
@@ -87,7 +87,7 @@ struct MeshPeerList: View {
                             Image(systemName: "nosign")
                                 .font(.system(size: 10))
                                 .foregroundColor(.red)
-                                .help("Blocked")
+                                .help("Engellendi")
                         }
 
                         if !isMe {
@@ -120,7 +120,7 @@ struct MeshPeerList: View {
                             Image(systemName: "envelope.fill")
                                 .font(.system(size: 10))
                                 .foregroundColor(.orange)
-                                .help("New messages")
+                                .help("Yeni mesajlar")
                         }
 
                         if !isMe {

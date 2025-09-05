@@ -134,7 +134,7 @@ final class GeoRelayDirectory {
     private func cacheURL() -> URL? {
         do {
             let base = try FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-            let dir = base.appendingPathComponent("bitchat", isDirectory: true)
+            let dir = base.appendingPathComponent("anadoluchat", isDirectory: true)
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
             return dir.appendingPathComponent(cacheFileName)
         } catch { return nil }

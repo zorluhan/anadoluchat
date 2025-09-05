@@ -106,7 +106,7 @@ struct NostrIdentity: Codable {
 
 /// Bridge between Noise and Nostr identities
 struct NostrIdentityBridge {
-    private static let keychainService = "chat.bitchat.nostr"
+    private static let keychainService = "chat.anadoluchat.nostr"
     private static let currentIdentityKey = "nostr-current-identity"
     private static let deviceSeedKey = "nostr-device-seed"
     // In-memory cache to avoid transient keychain access issues
