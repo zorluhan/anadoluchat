@@ -12,8 +12,8 @@
 	<string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
-    <key>CFBundleName</key>
-    <string>bounchat</string>
+	<key>CFBundleName</key>
+	<string>bounchat</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -33,6 +33,8 @@
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>bounchat uses Bluetooth to create a secure mesh network for chatting with nearby users.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>bounchat uses your approximate location to suggest nearby geohash channels.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>bounchat uses Bluetooth to discover and connect with other bounchat users nearby.</string>
 	<key>UIBackgroundModes</key>

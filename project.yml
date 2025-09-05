@@ -31,6 +31,7 @@ targets:
         CFBundleShortVersionString: $(MARKETING_VERSION)
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         NSBluetoothAlwaysUsageDescription: bounchat uses Bluetooth to create a secure mesh network for chatting with nearby users.
+        NSLocationWhenInUseUsageDescription: bounchat uses your approximate location to suggest nearby geohash channels.
         NSBluetoothPeripheralUsageDescription: bounchat uses Bluetooth to discover and connect with other bounchat users nearby.
         UIBackgroundModes:
           - bluetooth-central
@@ -83,6 +84,7 @@ targets:
         CFBundleVersion: $(CURRENT_PROJECT_VERSION)
         LSMinimumSystemVersion: $(MACOSX_DEPLOYMENT_TARGET)
         NSBluetoothAlwaysUsageDescription: bounchat uses Bluetooth to create a secure mesh network for chatting with nearby users.
+        # macOS uses NSLocationUsageDescription; iOS key is included only in iOS target above
         NSBluetoothPeripheralUsageDescription: bounchat uses Bluetooth to discover and connect with other bounchat users nearby.
         CFBundleURLTypes:
           - CFBundleURLSchemes:

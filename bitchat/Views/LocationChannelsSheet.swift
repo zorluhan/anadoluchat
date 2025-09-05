@@ -79,8 +79,14 @@ struct LocationChannelsSheet: View {
         #endif
         .onAppear {
             // Refresh channels when opening
-            if manager.permissionState == LocationChannelManager.PermissionState.authorized {
+            switch manager.permissionState {
+            case LocationChannelManager.PermissionState.notDetermined:
+                // Proactively request when-in-use authorization on first open
+                manager.enableLocationChannels()
+            case LocationChannelManager.PermissionState.authorized:
                 manager.refreshChannels()
+            default:
+                break
             }
             // Begin periodic refresh while sheet is open
             manager.beginLiveRefresh()
