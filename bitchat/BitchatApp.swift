@@ -12,6 +12,7 @@ import UserNotifications
 @main
 struct AnadoluchatApp: App {
     @StateObject private var chatViewModel = ChatViewModel()
+    @State private var accepted = TermsAcceptance.isAccepted
     #if os(iOS)
     @Environment(\.scenePhase) var scenePhase
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -27,9 +28,17 @@ struct AnadoluchatApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            Group {
+                if accepted {
+                    ContentView()
+                        .environmentObject(chatViewModel)
+                } else {
+                    FirstRunConsentView {
+                        accepted = true
+                    }
+                }
+            }
                 .preferredColorScheme(.dark)
-                .environmentObject(chatViewModel)
                 .onAppear {
                     NotificationDelegate.shared.chatViewModel = chatViewModel
                     // QR verification removed
