@@ -221,6 +221,13 @@ struct AppInfoView: View {
                 }
                 .buttonStyle(.plain)
                 .foregroundColor(textColor)
+
+                NavigationLink(destination: ModerationSettingsView()) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "eye.slash")
+                        Text("Moderasyon (Kelime Filtresi)")
+                    }
+                }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

@@ -302,10 +302,24 @@ struct ContentView: View {
                                     HStack(alignment: .top, spacing: 0) {
                                         let isLong = (message.content.count > TransportConfig.uiLongMessageLengthThreshold || message.content.hasVeryLongToken(threshold: TransportConfig.uiVeryLongTokenThreshold)) && cashuTokens.isEmpty
                                         let isExpanded = expandedMessageIDs.contains(message.id)
-                                        Text(viewModel.formatMessageAsText(message, colorScheme: colorScheme))
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .lineLimit(isLong && !isExpanded ? TransportConfig.uiLongMessageLineLimit : nil)
+                                        let hiddenByFilter = ModerationService.shared.hideOnReceive && ModerationService.shared.shouldMute(message.content)
+                                        if hiddenByFilter && !isExpanded {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "eye.slash")
+                                                    .foregroundColor(.secondary)
+                                                Text("mesaj filtre tarafından gizlendi")
+                                                    .foregroundColor(.secondary)
+                                                Button("göster") { expandedMessageIDs.insert(message.id) }
+                                                    .buttonStyle(.plain)
+                                            }
+                                            .font(.system(size: 12, design: .monospaced))
                                             .frame(maxWidth: .infinity, alignment: .leading)
+                                        } else {
+                                            Text(viewModel.formatMessageAsText(message, colorScheme: colorScheme))
+                                                .fixedSize(horizontal: false, vertical: true)
+                                                .lineLimit(isLong && !isExpanded ? TransportConfig.uiLongMessageLineLimit : nil)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
                                         
                                         // Delivery status indicator for private messages
                                         if message.isPrivate && message.sender == viewModel.nickname,

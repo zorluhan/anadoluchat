@@ -1279,6 +1279,12 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
         // Ignore messages that are empty or whitespace-only to prevent blank lines
         let trimmed = content.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+
+        // Moderation: block on send (Turkish-only word list)
+        if ModerationService.shared.blockOnSend && ModerationService.shared.shouldMute(trimmed) {
+            addSystemMessage("mesaj uygunluk filtresine takıldı ve gönderilmedi")
+            return
+        }
         
         // Check for commands
         if content.hasPrefix("/") {
