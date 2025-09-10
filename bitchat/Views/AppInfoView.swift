@@ -3,6 +3,7 @@ import SwiftUI
 struct AppInfoView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
+    @State private var showPrivacyPolicy = false
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
@@ -94,6 +95,9 @@ struct AppInfoView: View {
             }
         }
         #endif
+        .sheet(isPresented: $showPrivacyPolicy) {
+            PrivacyPolicyView()
+        }
     }
     
     @ViewBuilder
@@ -188,6 +192,22 @@ struct AppInfoView: View {
             .cornerRadius(8)
             
             .padding(.top)
+
+            // Legal / Support
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader("YASAL / DESTEK")
+                Button {
+                    showPrivacyPolicy = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "doc.text")
+                        Text("Gizlilik Politikası")
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(textColor)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
     }

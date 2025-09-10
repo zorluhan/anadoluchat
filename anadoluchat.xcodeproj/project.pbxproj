@@ -140,6 +140,7 @@
 		E881553DAEC3CF0BF3C6FE0F /* PublicChatE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA03102341A8CBE7FF62859F /* PublicChatE2ETests.swift */; };
 		ECAA67B196CA87A427C66167 /* BitchatProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8632FB9ADFD71678A16C867 /* BitchatProtocol.swift */; };
 		EDB30E4634E158F33FDE7272 /* SecureLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FB9A96F07594881E71C900 /* SecureLogger.swift */; };
+		EDD17360639F55AF2CDC8E1A /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809B84430A36CC32B0C44529 /* PrivacyPolicyView.swift */; };
 		EEB1B92B02933231A96CD7FD /* BitchatApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2459EE58E9C2015FD041A96C /* BitchatApp.swift */; };
 		EEC3975CBE65A2F4B62F6E7E /* VerificationViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 044044668E3A15339300853E /* VerificationViews.swift */; };
 		F046530D3FE4FD8EEC171429 /* InputValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAA9FCEA062EC2F2DE33C6B5 /* InputValidator.swift */; };
@@ -153,6 +154,7 @@
 		FAB508BADCE8B0EEA7577F6E /* BLEServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = C272988C01CD40F06DEB60F7 /* BLEServiceTests.swift */; };
 		FB642371CC85809D7CA30A7E /* UnifiedPeerService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 444E2D092C987881D0103177 /* UnifiedPeerService.swift */; };
 		FD9F36F8A5079ABDC8A5A354 /* AutocompleteService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F901EBD6C0A7E075B6E624C8 /* AutocompleteService.swift */; };
+		FEA24CB89544F3C86DFA8973 /* PrivacyPolicyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 809B84430A36CC32B0C44529 /* PrivacyPolicyView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -217,6 +219,7 @@
 		79ED097674A44E01DB4E3D4F /* PeerID.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerID.swift; sourceTree = "<group>"; };
 		7B252BEC89640055BD415C1F /* NostrProtocolTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NostrProtocolTests.swift; sourceTree = "<group>"; };
 		7D85ADCDBC132F822799C2BA /* NostrIdentity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NostrIdentity.swift; sourceTree = "<group>"; };
+		809B84430A36CC32B0C44529 /* PrivacyPolicyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrivacyPolicyView.swift; sourceTree = "<group>"; };
 		80A5BF3F1A6972E618E4C8EF /* bitchat-macOS.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "bitchat-macOS.entitlements"; sourceTree = "<group>"; };
 		851B3FEB349541F3FC498338 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		863A37149742925DDECDD956 /* VerificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationService.swift; sourceTree = "<group>"; };
@@ -441,6 +444,7 @@
 				6B183ED29245184EFE04B752 /* LocationChannelsSheet.swift */,
 				BECEAA00256D6C7C394CAD18 /* MeshPeerList.swift */,
 				8C2BF475D198E666227BC0AD /* MessageTextHelpers.swift */,
+				809B84430A36CC32B0C44529 /* PrivacyPolicyView.swift */,
 				044044668E3A15339300853E /* VerificationViews.swift */,
 			);
 			path = Views;
@@ -739,6 +743,7 @@
 				348736FB9385F21162772B59 /* PeerDisplayNameResolver.swift in Sources */,
 				10D01723E6B3D66ADDCC884F /* PeerID.swift in Sources */,
 				E3F36043B459B69A7AD4E4EA /* PeerIDResolver.swift in Sources */,
+				FEA24CB89544F3C86DFA8973 /* PrivacyPolicyView.swift in Sources */,
 				655C70B8481F513CA6A406EC /* PrivateChatManager.swift in Sources */,
 				77D53AAFBD23F1726456D82D /* RelayController.swift in Sources */,
 				2FEB1D0EC12C8E9D2F40C0E3 /* SecureIdentityStateManager.swift in Sources */,
@@ -799,6 +804,7 @@
 				810CD64C3E2BD281FBA624BB /* PeerDisplayNameResolver.swift in Sources */,
 				7F75A3509FB9F9006A120F34 /* PeerID.swift in Sources */,
 				2F8BD13C83EFB679919B0C79 /* PeerIDResolver.swift in Sources */,
+				EDD17360639F55AF2CDC8E1A /* PrivacyPolicyView.swift in Sources */,
 				44C9260DA3DC0083566B1064 /* PrivateChatManager.swift in Sources */,
 				4A9F02F7AA5D1A1FFFC54360 /* RelayController.swift in Sources */,
 				218ED9F7D47C79194C028E0F /* SecureIdentityStateManager.swift in Sources */,

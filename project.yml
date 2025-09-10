@@ -24,6 +24,7 @@ targets:
     resources:
       - bitchat/Assets.xcassets
       - bitchat/LaunchScreen.storyboard
+      - PRIVACY_POLICY.md
     info:
       path: bitchat/Info.plist
       properties:
@@ -76,6 +77,7 @@ targets:
       - bitchat
     resources:
       - bitchat/Assets.xcassets
+      - PRIVACY_POLICY.md
     info:
       path: bitchat/Info.plist
       properties:
