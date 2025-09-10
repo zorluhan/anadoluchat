@@ -176,7 +176,7 @@ struct ContentView: View {
             }
         }
         .confirmationDialog(
-            selectedMessageSender.map { "@\($0)" } ?? "Actions",
+            selectedMessageSender.map { "@\($0)" } ?? "Eylemler",
             isPresented: $showMessageActions,
             titleVisibility: .visible
         ) {
@@ -188,7 +188,7 @@ struct ContentView: View {
                 }
             }
 
-            Button("direkt mesaj") {
+            Button("özel mesaj") {
                 if let peerID = selectedMessageSenderID {
                     if peerID.hasPrefix("nostr:") {
                         if let full = viewModel.fullNostrHex(forSenderPeerID: peerID) {
@@ -204,19 +204,19 @@ struct ContentView: View {
                 }
             }
             
-            Button("hug") {
+            Button("sarıl") {
                 if let sender = selectedMessageSender {
                     viewModel.sendMessage("/hug @\(sender)")
                 }
             }
             
-            Button("slap") {
+            Button("tokat at") {
                 if let sender = selectedMessageSender {
                     viewModel.sendMessage("/slap @\(sender)")
                 }
             }
             
-            Button("BLOCK", role: .destructive) {
+            Button("Engelle", role: .destructive) {
                 // Prefer direct geohash block when we have a Nostr sender ID
                 if let peerID = selectedMessageSenderID, peerID.hasPrefix("nostr:"),
                    let full = viewModel.fullNostrHex(forSenderPeerID: peerID),
