@@ -6,6 +6,7 @@ final class ModerationService: ObservableObject {
     private let wordsKey = "moderation.muted.words"
     private let sendKey = "moderation.blockOnSend"
     private let recvKey = "moderation.hideOnReceive"
+    private let hiddenKey = "moderation.hidden.messageIDs"
 
     @Published var blockOnSend: Bool {
         didSet { UserDefaults.standard.set(blockOnSend, forKey: sendKey) }
@@ -15,6 +16,9 @@ final class ModerationService: ObservableObject {
     }
     @Published var mutedWords: [String] {
         didSet { UserDefaults.standard.set(mutedWords, forKey: wordsKey) }
+    }
+    @Published var hiddenMessageIDs: Set<String> {
+        didSet { UserDefaults.standard.set(Array(hiddenMessageIDs), forKey: hiddenKey) }
     }
 
     private init() {
@@ -32,6 +36,11 @@ final class ModerationService: ObservableObject {
                 // yasa dışı içerik kelimeleri (genel)
                 "uyuşturucu sat", "silah sat", "çocuk istismar"
             ]
+        }
+        if let arr = UserDefaults.standard.stringArray(forKey: hiddenKey) {
+            self.hiddenMessageIDs = Set(arr)
+        } else {
+            self.hiddenMessageIDs = []
         }
     }
 
@@ -56,5 +65,8 @@ final class ModerationService: ObservableObject {
         let folded = s.folding(options: [.diacriticInsensitive, .caseInsensitive], locale: .current)
         return folded.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
     }
-}
 
+    // Manual hide helpers
+    func hideMessage(id: String) { hiddenMessageIDs.insert(id) }
+    func isHidden(id: String) -> Bool { hiddenMessageIDs.contains(id) }
+}

@@ -48,6 +48,8 @@ struct ContentView: View {
     @State private var autocompleteDebounceTimer: Timer?
     @State private var showLocationChannelsSheet = false
     @State private var expandedMessageIDs: Set<String> = []
+    @State private var showReportSheet: Bool = false
+    @State private var reportTargetMessage: BitchatMessage? = nil
     // Window sizes for rendering (infinite scroll up)
     @State private var windowCountPublic: Int = 300
     @State private var windowCountPrivate: [String: Int] = [:]
@@ -281,7 +283,11 @@ struct ContentView: View {
                     }()
                     let items = windowedMessages.map { (uiID: "\(contextKey)|\($0.id)", message: $0) }
                     // Filter out empty/whitespace-only messages to avoid blank rows
-                    let filteredItems = items.filter { !$0.message.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+                    let filteredItems = items.filter {
+                        let notEmpty = !$0.message.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        let notManuallyHidden = !ModerationService.shared.isHidden(id: $0.message.id)
+                        return notEmpty && notManuallyHidden
+                    }
 
                     ForEach(filteredItems, id: \.uiID) { item in
                         let message = item.message
@@ -442,6 +448,10 @@ struct ContentView: View {
                                 pb.clearContents()
                                 pb.setString(message.content, forType: .string)
                                 #endif
+                            }
+                            Button("Rapor et") {
+                                reportTargetMessage = message
+                                showReportSheet = true
                             }
                         }
                         .padding(.horizontal, 12)
@@ -1265,6 +1275,11 @@ struct ContentView: View {
             LocationChannelsSheet(isPresented: $showLocationChannelsSheet, viewModel: viewModel)
                 .onAppear { viewModel.isLocationChannelsSheetPresented = true }
                 .onDisappear { viewModel.isLocationChannelsSheetPresented = false }
+        }
+        .sheet(isPresented: Binding(get: { showReportSheet }, set: { if !$0 { showReportSheet = false; reportTargetMessage = nil } })) {
+            if let msg = reportTargetMessage {
+                ReportMessageView(message: msg, viewModel: viewModel)
+            }
         }
         .alert("dikkat", isPresented: $viewModel.showScreenshotPrivacyWarning) {
             Button("tamam", role: .cancel) {}
