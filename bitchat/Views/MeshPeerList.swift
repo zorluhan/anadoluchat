@@ -14,15 +14,16 @@ struct MeshPeerList: View {
     @State private var reportTarget: (id: String, name: String)? = nil
 
     var body: some View {
-        if viewModel.allPeers.isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
+        Group {
+            if viewModel.allPeers.isEmpty {
+                VStack(alignment: .leading, spacing: 0) {
                 Text("etrafta kimse yok...")
                     .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(secondaryTextColor)
                     .padding(.horizontal)
                     .padding(.top, 12)
-            }
-        } else {
+                }
+            } else {
             let myPeerID = viewModel.meshService.myPeerID
             let mapped: [(peer: BitchatPeer, isMe: Bool, hasUnread: Bool, enc: EncryptionStatus)] = viewModel.allPeers.map { peer in
                 let isMe = peer.id == myPeerID
@@ -160,6 +161,7 @@ struct MeshPeerList: View {
                 newOrder.removeAll { !ids.contains($0) }
                 for id in ids where !newOrder.contains(id) { newOrder.append(id) }
                 if newOrder != orderedIDs { orderedIDs = newOrder }
+            }
             }
         }
         .sheet(isPresented: $showReportUser) {

@@ -11,15 +11,16 @@ struct GeohashPeopleList: View {
     @State private var reportTarget: (id: String, name: String)? = nil
 
     var body: some View {
-        if viewModel.visibleGeohashPeople().isEmpty {
-            VStack(alignment: .leading, spacing: 0) {
+        Group {
+            if viewModel.visibleGeohashPeople().isEmpty {
+                VStack(alignment: .leading, spacing: 0) {
                 Text("etrafta kimse yok...")
                     .font(.system(size: 14, design: .monospaced))
                     .foregroundColor(secondaryTextColor)
                     .padding(.horizontal)
                     .padding(.top, 12)
-            }
-        } else {
+                }
+            } else {
             let myHex: String? = {
                 if case .location(let ch) = LocationChannelManager.shared.selectedChannel,
                    let id = try? NostrIdentityBridge.deriveIdentity(forGeohash: ch.geohash) {
@@ -120,6 +121,7 @@ struct GeohashPeopleList: View {
                 newOrder.removeAll { !ids.contains($0) }
                 for id in ids where !newOrder.contains(id) { newOrder.append(id) }
                 if newOrder != orderedIDs { orderedIDs = newOrder }
+            }
             }
         }
         .sheet(isPresented: $showReportUser) {

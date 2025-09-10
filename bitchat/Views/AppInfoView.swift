@@ -80,6 +80,8 @@ struct AppInfoView: View {
             .background(backgroundColor)
         }
         .frame(width: 600, height: 700)
+        .sheet(isPresented: $showPrivacyPolicy) { PrivacyPolicyView() }
+        .sheet(isPresented: $showTerms) { TermsView() }
         #else
         NavigationView {
             ScrollView {
@@ -92,13 +94,9 @@ struct AppInfoView: View {
                     .foregroundColor(textColor)
             )
         }
+        .sheet(isPresented: $showPrivacyPolicy) { PrivacyPolicyView() }
+        .sheet(isPresented: $showTerms) { TermsView() }
         #endif
-        .sheet(isPresented: $showPrivacyPolicy) {
-            PrivacyPolicyView()
-        }
-        .sheet(isPresented: $showTerms) {
-            TermsView()
-        }
     }
     
     @ViewBuilder
