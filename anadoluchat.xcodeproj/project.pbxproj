@@ -60,6 +60,7 @@
 		46A3EB0F5E4E8C2828540E40 /* NoiseProtocolTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2D9AE5E9A4F9112724948CFD /* NoiseProtocolTests.swift */; };
 		4A9F02F7AA5D1A1FFFC54360 /* RelayController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6C8E29419124EC488C1D0F7 /* RelayController.swift */; };
 		4D56DB1F87EC656BD32BBCFB /* Geohash.swift in Sources */ = {isa = PBXBuildFile; fileRef = E04084D2E2BDF28251C38E16 /* Geohash.swift */; };
+		5096352BA10BA79B647CAEEA /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95AC4B145DA7C7BEAA65386F /* TermsView.swift */; };
 		51896E5D66BC90F6B8F70D41 /* BinaryProtocolPaddingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0597291A6536DBAF9ABCFA28 /* BinaryProtocolPaddingTests.swift */; };
 		548A6077068E1B7B7229C11B /* PrivateChatE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD8AB4C81020F4B6503D2B6 /* PrivateChatE2ETests.swift */; };
 		56A613C18D4B4470BF2BEDD0 /* BinaryEncodingUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FB41D91F5A116B22558785 /* BinaryEncodingUtils.swift */; };
@@ -137,6 +138,7 @@
 		E76C6234457F904CC07DAE27 /* GeohashPeopleList.swift in Sources */ = {isa = PBXBuildFile; fileRef = A52E06CE9C35CD71FB5BCA91 /* GeohashPeopleList.swift */; };
 		E788205ACBA6DE1559796F04 /* MockBLEService.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD0F4D0AFDB08E0A3CBD559A /* MockBLEService.swift */; };
 		E7E2D298DF95119163C2A96D /* InputValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3429F1BB632927CD92F7BFB9 /* InputValidatorTests.swift */; };
+		E8009B0A275F4443B489E946 /* TermsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 95AC4B145DA7C7BEAA65386F /* TermsView.swift */; };
 		E881553DAEC3CF0BF3C6FE0F /* PublicChatE2ETests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FA03102341A8CBE7FF62859F /* PublicChatE2ETests.swift */; };
 		ECAA67B196CA87A427C66167 /* BitchatProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8632FB9ADFD71678A16C867 /* BitchatProtocol.swift */; };
 		EDB30E4634E158F33FDE7272 /* SecureLogger.swift in Sources */ = {isa = PBXBuildFile; fileRef = B0FB9A96F07594881E71C900 /* SecureLogger.swift */; };
@@ -224,6 +226,7 @@
 		851B3FEB349541F3FC498338 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		863A37149742925DDECDD956 /* VerificationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerificationService.swift; sourceTree = "<group>"; };
 		8C2BF475D198E666227BC0AD /* MessageTextHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTextHelpers.swift; sourceTree = "<group>"; };
+		95AC4B145DA7C7BEAA65386F /* TermsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsView.swift; sourceTree = "<group>"; };
 		A52E06CE9C35CD71FB5BCA91 /* GeohashPeopleList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeohashPeopleList.swift; sourceTree = "<group>"; };
 		A926BCF2065EB43ABEC20FE5 /* NoiseProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoiseProtocol.swift; sourceTree = "<group>"; };
 		AA18409D0D9316AC9B395D39 /* CommandProcessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommandProcessor.swift; sourceTree = "<group>"; };
@@ -445,6 +448,7 @@
 				BECEAA00256D6C7C394CAD18 /* MeshPeerList.swift */,
 				8C2BF475D198E666227BC0AD /* MessageTextHelpers.swift */,
 				809B84430A36CC32B0C44529 /* PrivacyPolicyView.swift */,
+				95AC4B145DA7C7BEAA65386F /* TermsView.swift */,
 				044044668E3A15339300853E /* VerificationViews.swift */,
 			);
 			path = Views;
@@ -748,6 +752,7 @@
 				77D53AAFBD23F1726456D82D /* RelayController.swift in Sources */,
 				2FEB1D0EC12C8E9D2F40C0E3 /* SecureIdentityStateManager.swift in Sources */,
 				41A52EFE2C381B2FEE39C0DD /* SecureLogger.swift in Sources */,
+				5096352BA10BA79B647CAEEA /* TermsView.swift in Sources */,
 				408797F2A369CCDBDBDC7F44 /* Transport.swift in Sources */,
 				1E8021C05CCF08C168502E70 /* TransportConfig.swift in Sources */,
 				FB642371CC85809D7CA30A7E /* UnifiedPeerService.swift in Sources */,
@@ -809,6 +814,7 @@
 				4A9F02F7AA5D1A1FFFC54360 /* RelayController.swift in Sources */,
 				218ED9F7D47C79194C028E0F /* SecureIdentityStateManager.swift in Sources */,
 				EDB30E4634E158F33FDE7272 /* SecureLogger.swift in Sources */,
+				E8009B0A275F4443B489E946 /* TermsView.swift in Sources */,
 				99EF8C02C0F96CC63ED6F003 /* Transport.swift in Sources */,
 				80AAD77913BE387D71FEF892 /* TransportConfig.swift in Sources */,
 				B156614553BBE783103C6133 /* UnifiedPeerService.swift in Sources */,

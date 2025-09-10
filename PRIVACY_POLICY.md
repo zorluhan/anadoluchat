@@ -1,139 +1,104 @@
-# bitchat Privacy Policy
+# Gizlilik Politikası
 
-*Last updated: January 2025*
+Güncelleme: Ocak 2025
 
-## Our Commitment
+## Taahhüdümüz
 
-bitchat is designed with privacy as its foundation. We believe private communication is a fundamental human right. This policy explains how bitchat protects your privacy.
+Bu uygulama gizlilik odaklıdır. Özel iletişimin temel bir hak olduğuna inanıyoruz. Bu politika, gizliliğinizi nasıl koruduğumuzu açıklar.
 
-## Summary
+## Özet
 
-- **No personal data collection** - We don't collect names, emails, or phone numbers
-- **No servers** - Everything happens on your device and through peer-to-peer connections
-- **No tracking** - We have no analytics, telemetry, or user tracking
-- **Open source** - You can verify these claims by reading our code
+- **Kişisel veri toplamıyoruz** – İsim, e‑posta, telefon numarası yok
+- **Sunucu yok** – Tüm işlemler cihazınızda ve eşler arası gerçekleşir
+- **Takip yok** – Analitik, telemetri veya izleme yok
+- **Açık kaynak** – Kodumuzu okuyarak doğrulayabilirsiniz
 
-## What Information bitchat Stores
+## Cihazınızda Tutulan Veriler
 
-### On Your Device Only
+1. **Kimlik Anahtarı**
+   - İlk çalıştırmada üretilen kriptografik anahtar
+   - Cihazın güvenli alanında yerel olarak saklanır
+   - Favoriler gibi ilişkileri sürdürmeye yarar; cihazı terk etmez
 
-1. **Identity Key** 
-   - A cryptographic key generated on first launch
-   - Stored locally in your device's secure storage
-   - Allows you to maintain "favorite" relationships across app restarts
-   - Never leaves your device
+2. **Takma Ad**
+   - Seçtiğiniz görünen ad
+   - Yalnızca cihazınızda saklanır; ileti kurduğunuz eşlerle paylaşılır
 
-2. **Nickname**
-   - The display name you choose (or auto-generated)
-   - Stored only on your device
-   - Shared with peers you communicate with
+3. **Mesaj Geçmişi** (etkinse)
+   - Yerel olarak şifreli tutulur; istediğiniz zaman silebilirsiniz
 
-3. **Message History** (if enabled)
-   - When room owners enable retention, messages are saved locally
-   - Stored encrypted on your device
-   - You can delete this at any time
+4. **Favori Kişiler**
+   - İşaretlediğiniz eşlerin açık anahtarları
+   - Yalnızca cihazınızda saklanır
 
-4. **Favorite Peers**
-   - Public keys of peers you mark as favorites
-   - Stored only on your device
-   - Allows you to recognize these peers in future sessions
+### Oturum Verileri (Geçici)
 
-### Temporary Session Data
+- Aktif bağlantılar, yönlendirme bilgisi, çevrimdışı eşler için kısa süreli kuyruklar (maks. 12 saat)
 
-During each session, bitchat temporarily maintains:
-- Active peer connections (forgotten when app closes)
-- Routing information for message delivery
-- Cached messages for offline peers (12 hours max)
+## Paylaşılan Bilgiler
 
-## What Information is Shared
+Yakındaki eşler şunları görebilir:
+- Takma adınız
+- Oturumluk açık anahtarınız
+- Gönderdiğiniz mesajlar
+- Yaklaşık Bluetooth sinyal gücü
 
-### With Other bitchat Users
+Parola korumalı bir odaya katıldığınızda, odaya erişimi olanlar mesajlarınızı görebilir ve takma adınızı listeleyebilir.
 
-When you use bitchat, nearby peers can see:
-- Your chosen nickname
-- Your ephemeral public key (changes each session)
-- Messages you send to public rooms or directly to them
-- Your approximate Bluetooth signal strength (for connection quality)
+## Yapmadıklarımız
 
-### With Room Members
+- Kişisel bilgi toplamayız
+- Konum takibi yapmayız
+- Sunucularda veri tutmayız
+- Üçüncü taraflarla veri paylaşmayız
+- Analitik/telemetri yoktur
+- Profil oluşturmayız
+- Kayıt/zorunlu hesap yoktur
 
-When you join a password-protected room:
-- Your messages are visible to others with the password
-- Your nickname appears in the member list
-- Room owners can see you've joined
+## Şifreleme
 
-## What We DON'T Do
+Özel mesajlar uçtan uca şifrelenir ve modern kriptografi kullanılır.
 
-bitchat **never**:
-- Collects personal information
-- Tracks your location
-- Stores data on servers
-- Shares data with third parties
-- Uses analytics or telemetry
-- Creates user profiles
-- Requires registration
+## Haklarınız
 
-## Encryption
+- **Her şeyi silin**: Logoya üç kez dokunarak tüm verileri temizleyin
+- **İstediğiniz zaman çıkın**: Uygulamayı kapattığınızda görünürlüğünüz biter
+- **Hesap yok**: Sunucuda silinecek bir şey yoktur
 
-All private messages use end-to-end encryption:
-- **X25519** for key exchange
-- **AES-256-GCM** for message encryption
-- **Ed25519** for digital signatures
-- **Argon2id** for password-protected rooms
+## İzinler
 
-## Your Rights
+- Bluetooth yalnızca eşler arası iletişim içindir
+- Konum verisi istemez, saklamaz
+- İzni istediğiniz an sistem ayarlarından kaldırabilirsiniz
 
-You have complete control:
-- **Delete Everything**: Triple-tap the logo to instantly wipe all data
-- **Leave Anytime**: Close the app and your presence disappears
-- **No Account**: Nothing to delete from servers because there are none
-- **Portability**: Your data never leaves your device unless you export it
+## Çocukların Gizliliği
 
-## Bluetooth & Permissions
+Kişisel veri toplamadığımız için çocuklardan bilerek veri toplamıyoruz.
 
-bitchat requires Bluetooth permission to function:
-- Used only for peer-to-peer communication
-- No location data is accessed or stored
-- Bluetooth is not used for tracking
-- You can revoke this permission at any time in system settings
+## Saklama
 
-## Children's Privacy
+- Mesajlar: Uygulamadan çıkınca bellekten silinir (geçmiş açık değilse)
+- Kimlik anahtarı ve favoriler: Siz silene kadar cihazda kalır
 
-bitchat does not knowingly collect information from children. The app has no age verification because it collects no personal information from anyone.
+## Güvenlik Önlemleri
 
-## Data Retention
+- Tüm iletişim şifrelidir
+- Sunucu bulunmadığı için merkezi sızıntı riski yoktur
+- Açık kaynak kod ve düzenli güvenlik iyileştirmeleri
 
-- **Messages**: Deleted from memory when app closes (unless room retention is enabled)
-- **Identity Key**: Persists until you delete the app
-- **Favorites**: Persist until you remove them or delete the app
-- **Everything Else**: Exists only during active sessions
+## Değişiklikler
 
-## Security Measures
+Politika güncellenirse tarih değişir ve uygulamaya dahil edilir.
 
-- All communication is encrypted
-- No data transmitted to servers (there are none)
-- Open source code for public audit
-- Regular security updates
-- Cryptographic signatures prevent tampering
+## İletişim
 
-## Changes to This Policy
+Kaynak kodu: https://github.com/permissionlesstech/bitchat/tree/main
+Sorular için GitHub üzerinde konu açabilirsiniz.
 
-If we update this policy:
-- The "Last updated" date will change
-- The updated policy will be included in the app
-- No retroactive changes can affect data (since we don't collect any)
+## Felsefe
 
-## Contact
-
-bitchat is an open source project. For privacy questions:
-- View our source code: [https://github.com/permissionlesstech/bitchat/tree/main](https://github.com/permissionlesstech/bitchat/tree/main)
-- Open an issue on GitHub
-- Join the discussion in public rooms
-
-## Philosophy
-
-Privacy isn't just a feature—it's the entire point. bitchat proves that modern communication doesn't require surrendering your privacy. No accounts, no servers, no surveillance. Just people talking freely.
+Gizlilik bir özellik değildir; temel amaçtır. Sunucusuz, hesapsız, takip olmadan iletişim mümkündür.
 
 ---
 
-*This policy is released into the public domain under The Unlicense, just like bitchat itself.*
+Bu metin, The Unlicense kapsamındaki kamu malı lisansı ile yayımlanır.

@@ -4,6 +4,7 @@ struct AppInfoView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
     @State private var showPrivacyPolicy = false
+    @State private var showTerms = false
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
@@ -97,6 +98,9 @@ struct AppInfoView: View {
         #endif
         .sheet(isPresented: $showPrivacyPolicy) {
             PrivacyPolicyView()
+        }
+        .sheet(isPresented: $showTerms) {
+            TermsView()
         }
     }
     
@@ -202,6 +206,17 @@ struct AppInfoView: View {
                     HStack(spacing: 8) {
                         Image(systemName: "doc.text")
                         Text("Gizlilik Politikası")
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(textColor)
+
+                Button {
+                    showTerms = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "scroll")
+                        Text("Kullanım Şartları")
                     }
                 }
                 .buttonStyle(.plain)

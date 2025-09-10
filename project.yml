@@ -24,6 +24,7 @@ targets:
     resources:
       - bitchat/Assets.xcassets
       - bitchat/LaunchScreen.storyboard
+      - KULLANIM_SARTLARI.md
       - PRIVACY_POLICY.md
     info:
       path: bitchat/Info.plist
@@ -77,6 +78,7 @@ targets:
       - bitchat
     resources:
       - bitchat/Assets.xcassets
+      - KULLANIM_SARTLARI.md
       - PRIVACY_POLICY.md
     info:
       path: bitchat/Info.plist
