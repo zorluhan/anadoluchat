@@ -20,13 +20,13 @@ struct PrivacyPolicyView: View {
             policyContent
                 .navigationTitle("Gizlilik Politikası")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .navigationBarTrailing) {
-                        Button("kapat") { dismiss() }
-                            .foregroundColor(textColor)
-                    }
-                }
+                .navigationBarItems(trailing:
+                    Button("kapat") { dismiss() }
+                        .foregroundColor(textColor)
+                )
         }
+        .onAppear(perform: loadPolicy)
+        .background(backgroundColor)
         #else
         VStack(spacing: 0) {
             HStack {
@@ -40,9 +40,9 @@ struct PrivacyPolicyView: View {
             policyContent
         }
         .frame(minWidth: 520, minHeight: 600)
-        #endif
         .onAppear(perform: loadPolicy)
         .background(backgroundColor)
+        #endif
     }
 
     private var policyContent: some View {

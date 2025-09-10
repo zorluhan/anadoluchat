@@ -14,8 +14,12 @@ struct TermsView: View {
             termsContent
                 .navigationTitle("Kullanım Şartları")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbar { ToolbarItem(placement: .navigationBarTrailing) { Button("kapat") { dismiss() }.foregroundColor(textColor) } }
+                .navigationBarItems(trailing:
+                    Button("kapat") { dismiss() }.foregroundColor(textColor)
+                )
         }
+        .onAppear(perform: load)
+        .background(backgroundColor)
         #else
         VStack(spacing: 0) {
             HStack { Spacer(); Button("BİTTİ") { dismiss() }.buttonStyle(.plain).foregroundColor(textColor).padding() }
@@ -23,9 +27,9 @@ struct TermsView: View {
             termsContent
         }
         .frame(minWidth: 520, minHeight: 600)
-        #endif
         .onAppear(perform: load)
         .background(backgroundColor)
+        #endif
     }
 
     private var termsContent: some View {

@@ -78,7 +78,7 @@ struct ReportMessageView: View {
         lines.append("neden: \(reason.rawValue)")
         if !note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty { lines.append("not: \(note)") }
         let channelDesc: String = {
-            switch viewModel.activeChannel {
+            switch LocationChannelManager.shared.selectedChannel {
             case .mesh: return "mesh"
             case .location(let ch):
                 if includeRegionOnly { return "geo:#\(String(ch.geohash.prefix(2)))" }
@@ -107,4 +107,3 @@ struct ReportMessageView: View {
         }
     }
 }
-

@@ -87,14 +87,10 @@ struct AppInfoView: View {
             }
             .background(backgroundColor)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("kapat") {
-                        dismiss()
-                    }
+            .navigationBarItems(trailing:
+                Button("kapat") { dismiss() }
                     .foregroundColor(textColor)
-                }
-            }
+            )
         }
         #endif
         .sheet(isPresented: $showPrivacyPolicy) {
@@ -315,4 +311,5 @@ struct FeatureRow: View {
 
 #Preview {
     AppInfoView()
+        .environmentObject(ChatViewModel())
 }
