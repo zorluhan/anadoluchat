@@ -85,6 +85,8 @@ struct LocationChannelsSheet: View {
             // Begin periodic refresh while sheet is open
             manager.beginLiveRefresh()
             // Geohash sampling is now managed by ChatViewModel globally
+            // Lazily warm georelay directory (no I/O until first use)
+            GeoRelayDirectory.shared.prefetchIfNeeded()
         }
         .onDisappear {
             manager.endLiveRefresh()
