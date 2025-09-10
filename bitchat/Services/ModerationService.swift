@@ -69,4 +69,17 @@ final class ModerationService: ObservableObject {
     // Manual hide helpers
     func hideMessage(id: String) { hiddenMessageIDs.insert(id) }
     func isHidden(id: String) -> Bool { hiddenMessageIDs.contains(id) }
+
+    // URL / e‑posta tespiti (basit)
+    func containsURLorEmail(_ s: String) -> Bool {
+        let text = s.lowercased()
+        if text.contains("http://") || text.contains("https://") || text.contains("www.") { return true }
+        // Basit email deseni
+        let pattern = #"[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}"#
+        if let re = try? NSRegularExpression(pattern: pattern, options: [.caseInsensitive]) {
+            let range = NSRange(text.startIndex..<text.endIndex, in: text)
+            if re.firstMatch(in: text, options: [], range: range) != nil { return true }
+        }
+        return false
+    }
 }

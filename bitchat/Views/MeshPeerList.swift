@@ -10,6 +10,8 @@ struct MeshPeerList: View {
     @Environment(\.colorScheme) var colorScheme
 
     @State private var orderedIDs: [String] = []
+    @State private var showReportUser = false
+    @State private var reportTarget: (id: String, name: String)? = nil
 
     var body: some View {
         if viewModel.allPeers.isEmpty {
@@ -138,6 +140,14 @@ struct MeshPeerList: View {
                     .contentShape(Rectangle())
                     .onTapGesture { if !isMe { onTapPeer(peer.id) } }
                     .onTapGesture(count: 2) { if !isMe { onShowFingerprint(peer.id) } }
+                    .contextMenu {
+                        if !isMe {
+                            Button("Rapor et kullanıcı") {
+                                reportTarget = (peer.id, peer.nickname)
+                                showReportUser = true
+                            }
+                        }
+                    }
                 }
             }
             // Seed and update order outside result builder
@@ -150,6 +160,11 @@ struct MeshPeerList: View {
                 newOrder.removeAll { !ids.contains($0) }
                 for id in ids where !newOrder.contains(id) { newOrder.append(id) }
                 if newOrder != orderedIDs { orderedIDs = newOrder }
+            }
+        }
+        .sheet(isPresented: $showReportUser) {
+            if let target = reportTarget {
+                ReportUserView(userId: target.id, displayName: target.name, viewModel: viewModel)
             }
         }
     }

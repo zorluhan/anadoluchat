@@ -2,6 +2,8 @@ import SwiftUI
 
 struct ModerationSettingsView: View {
     @ObservedObject var moderation = ModerationService.shared
+    @EnvironmentObject var envViewModel: ChatViewModel
+    var viewModel: ChatViewModel?
     @State private var newWord = ""
 
     var body: some View {
@@ -11,6 +13,8 @@ struct ModerationSettingsView: View {
         content.frame(minWidth: 480, minHeight: 520)
         #endif
     }
+
+    private var vm: ChatViewModel { viewModel ?? envViewModel }
 
     private var content: some View {
         Form {
@@ -36,9 +40,31 @@ struct ModerationSettingsView: View {
                 }
                 .frame(height: 260)
             }
+
+            // Optional: Engellenenler listesi (özet)
+            Section(header: Text("Engellenenler (özet)")) {
+                Button("Blok listesini sohbette göster (/block)") {
+                    vm.sendMessage("/block")
+                }
+                let geoBlocked = Array(SecureIdentityStateManager.shared.getBlockedNostrPubkeys())
+                if !geoBlocked.isEmpty {
+                    Text("Geohash engelleri:")
+                        .font(.system(size: 12, design: .monospaced))
+                        .foregroundColor(.secondary)
+                    ForEach(geoBlocked, id: \.self) { key in
+                        let name = vm.geohashDisplayName(for: key)
+                        HStack {
+                            Text(name)
+                            Spacer()
+                            Button("Engeli Kaldır") {
+                                vm.unblockGeohashUser(pubkeyHexLowercased: key, displayName: name)
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
 
 #Preview { ModerationSettingsView() }
-

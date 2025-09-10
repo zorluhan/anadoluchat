@@ -3,6 +3,7 @@ import SwiftUI
 struct AppInfoView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var viewModel: ChatViewModel
     @State private var showPrivacyPolicy = false
     @State private var showTerms = false
     
@@ -222,12 +223,32 @@ struct AppInfoView: View {
                 .buttonStyle(.plain)
                 .foregroundColor(textColor)
 
-                NavigationLink(destination: ModerationSettingsView()) {
+                NavigationLink(destination: ModerationSettingsView(viewModel: viewModel)) {
                     HStack(spacing: 8) {
                         Image(systemName: "eye.slash")
                         Text("Moderasyon (Kelime Filtresi)")
                     }
                 }
+
+                Button {
+                    let to = "zorluhan@capish.co"
+                    #if os(iOS)
+                    if let url = URL(string: "mailto:\(to)") { UIApplication.shared.open(url) }
+                    #else
+                    if let url = URL(string: "mailto:\(to)") { NSWorkspace.shared.open(url) }
+                    #endif
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "envelope")
+                        Text("Destek ile iletişim")
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(textColor)
+
+                Text("Raporlara 24 saat içinde yanıt veririz.")
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(secondaryTextColor)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

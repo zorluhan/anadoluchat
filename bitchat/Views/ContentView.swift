@@ -1287,6 +1287,11 @@ struct ContentView: View {
             Text("konum kanallarının ekran görüntüleri konumunuzu açığa çıkarır. herkese açık paylaşmadan önce düşünün.")
         }
         .background(backgroundColor.opacity(0.95))
+        .alert("takma ad uygun değil", isPresented: Binding(get: { viewModel.nicknameValidationError != nil }, set: { if !$0 { viewModel.nicknameValidationError = nil } })) {
+            Button("tamam", role: .cancel) {}
+        } message: {
+            Text(viewModel.nicknameValidationError ?? "")
+        }
     }
     
     private var privateHeaderView: some View {

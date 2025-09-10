@@ -7,6 +7,8 @@ struct GeohashPeopleList: View {
     let onTapPerson: () -> Void
     @Environment(\.colorScheme) var colorScheme
     @State private var orderedIDs: [String] = []
+    @State private var showReportUser = false
+    @State private var reportTarget: (id: String, name: String)? = nil
 
     var body: some View {
         if viewModel.visibleGeohashPeople().isEmpty {
@@ -101,6 +103,10 @@ struct GeohashPeopleList: View {
                             } else {
                                 Button("Engelle") { viewModel.blockGeohashUser(pubkeyHexLowercased: person.id, displayName: person.displayName) }
                             }
+                            Button("Rapor et kullanıcı") {
+                                reportTarget = (person.id, person.displayName)
+                                showReportUser = true
+                            }
                         }
                     }
                 }
@@ -114,6 +120,11 @@ struct GeohashPeopleList: View {
                 newOrder.removeAll { !ids.contains($0) }
                 for id in ids where !newOrder.contains(id) { newOrder.append(id) }
                 if newOrder != orderedIDs { orderedIDs = newOrder }
+            }
+        }
+        .sheet(isPresented: $showReportUser) {
+            if let target = reportTarget {
+                ReportUserView(userId: target.id, displayName: target.name, viewModel: viewModel)
             }
         }
     }
