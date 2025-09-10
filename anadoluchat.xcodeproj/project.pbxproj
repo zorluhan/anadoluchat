@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 63;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -220,7 +220,7 @@
 		472D98E94A72E9DCD8F56E05 /* TestConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestConstants.swift; sourceTree = "<group>"; };
 		4B86C649B5CF6043D09B35AF /* GeoRelayDirectory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GeoRelayDirectory.swift; sourceTree = "<group>"; };
 		4BA24A233A3C5B01B30CE63C /* ModerationSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModerationSettingsView.swift; sourceTree = "<group>"; };
-		52DFB8C34F9B2C4FD83045BB /* bounchat_iOS.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = bounchat_iOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		52DFB8C34F9B2C4FD83045BB /* bounchat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bounchat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		54AF4F0B960F61CBFAFA14F1 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
 		56D36C4DE9DF4C40245B10EF /* FragmentationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FragmentationTests.swift; sourceTree = "<group>"; };
 		5BFF127E4A2D1CFF7C1F2797 /* PeerIDResolver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PeerIDResolver.swift; sourceTree = "<group>"; };
@@ -258,7 +258,7 @@
 		BAF07B451DED9FFB18F3650D /* IntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IntegrationTests.swift; sourceTree = "<group>"; };
 		BD6747C217D8522976E4F7D0 /* ReportUserView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportUserView.swift; sourceTree = "<group>"; };
 		BECEAA00256D6C7C394CAD18 /* MeshPeerList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MeshPeerList.swift; sourceTree = "<group>"; };
-		C02225DBC3E0097D89F28BC0 /* bounchat_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = bounchat_macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C02225DBC3E0097D89F28BC0 /* bounchat_macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = bounchat_macOS.app; path = bounchat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C272988C01CD40F06DEB60F7 /* BLEServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BLEServiceTests.swift; sourceTree = "<group>"; };
 		C383C185ED36AB65F0BE54E7 /* FingerprintView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FingerprintView.swift; sourceTree = "<group>"; };
 		C603759DD37DB4BAF34B7DC6 /* ReportMessageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportMessageView.swift; sourceTree = "<group>"; };
@@ -424,7 +424,7 @@
 		7F7DA6C0E0D7E67867EE016D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				52DFB8C34F9B2C4FD83045BB /* bounchat_iOS.app */,
+				52DFB8C34F9B2C4FD83045BB /* bounchat.app */,
 				C02225DBC3E0097D89F28BC0 /* bounchat_macOS.app */,
 				1B665FCC7BA72464DCD0B7D9 /* bounchatTests_iOS.xctest */,
 				69DE15DDC98A55F8FECC5E25 /* bounchatTests_macOS.xctest */,
@@ -631,7 +631,7 @@
 				38784676460B1EA779D788DA /* P256K */,
 			);
 			productName = bounchat_iOS;
-			productReference = 52DFB8C34F9B2C4FD83045BB /* bounchat_iOS.app */;
+			productReference = 52DFB8C34F9B2C4FD83045BB /* bounchat.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -656,7 +656,6 @@
 						ProvisioningStyle = Automatic;
 					};
 					EE0859AED3AC9A3BB94877DD = {
-						DevelopmentTeam = "";
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -674,7 +673,6 @@
 			packageReferences = (
 				97F76FCB7FB7B9B0ECB327AA /* XCRemoteSwiftPackageReference "swift-secp256k1" */,
 			);
-			preferredProjectObjectVersion = 77;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
@@ -980,7 +978,7 @@
 				CODE_SIGN_ENTITLEMENTS = bitchat/bitchat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Z3HWDB2ZX9;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = bitchat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
@@ -1159,7 +1157,7 @@
 				CODE_SIGN_ENTITLEMENTS = bitchat/bitchat.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = Z3HWDB2ZX9;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = bitchat/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;

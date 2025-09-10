@@ -11,7 +11,7 @@ struct TermsView: View {
     var body: some View {
         #if os(iOS)
         NavigationView {
-            content
+            termsContent
                 .navigationTitle("Kullanım Şartları")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { ToolbarItem(placement: .navigationBarTrailing) { Button("kapat") { dismiss() }.foregroundColor(textColor) } }
@@ -20,7 +20,7 @@ struct TermsView: View {
         VStack(spacing: 0) {
             HStack { Spacer(); Button("BİTTİ") { dismiss() }.buttonStyle(.plain).foregroundColor(textColor).padding() }
             .background(backgroundColor.opacity(0.95))
-            content
+            termsContent
         }
         .frame(minWidth: 520, minHeight: 600)
         #endif
@@ -28,7 +28,7 @@ struct TermsView: View {
         .background(backgroundColor)
     }
 
-    private var content: some View {
+    private var termsContent: some View {
         ScrollView { Text(text).frame(maxWidth: .infinity, alignment: .leading).padding() }
             .background(backgroundColor)
     }
@@ -46,4 +46,3 @@ struct TermsView: View {
 }
 
 #Preview { TermsView() }
-

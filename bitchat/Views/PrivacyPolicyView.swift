@@ -17,7 +17,7 @@ struct PrivacyPolicyView: View {
     var body: some View {
         #if os(iOS)
         NavigationView {
-            content
+            policyContent
                 .navigationTitle("Gizlilik Politikası")
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
@@ -37,7 +37,7 @@ struct PrivacyPolicyView: View {
                     .padding()
             }
             .background(backgroundColor.opacity(0.95))
-            content
+            policyContent
         }
         .frame(minWidth: 520, minHeight: 600)
         #endif
@@ -45,7 +45,7 @@ struct PrivacyPolicyView: View {
         .background(backgroundColor)
     }
 
-    private var content: some View {
+    private var policyContent: some View {
         ScrollView {
             Text(text)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,4 +70,3 @@ struct PrivacyPolicyView: View {
 #Preview {
     PrivacyPolicyView()
 }
-
