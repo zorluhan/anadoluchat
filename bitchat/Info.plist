@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>bounchat</string>
+	<string>$(PRODUCT_NAME)</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -32,11 +32,13 @@
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
-	<string>bounchat uses Bluetooth to create a secure mesh network for chatting with nearby users.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>bounchat uses your approximate location to suggest nearby geohash channels.</string>
+	<string>bounchat, yakındaki kullanıcılarla sohbet etmek için güvenli bir mesh ağ oluşturmak amacıyla Bluetooth’u kullanır.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
-	<string>bounchat uses Bluetooth to discover and connect with other bounchat users nearby.</string>
+	<string>bounchat, yakındaki diğer bounchat kullanıcılarını keşfetmek ve bağlanmak için Bluetooth’u kullanır.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>bounchat, yakınınızdaki geohash kanallarını önermek için yaklaşık konumunuzu kullanır. Kesin GPS asla paylaşılmaz.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>bounchat, QR kodları tarayarak eş doğrulaması yapmak için kamerayı kullanır.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

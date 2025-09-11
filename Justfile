@@ -24,7 +24,7 @@ backup:
     @echo "Backing up original project configuration..."
     @cp project.yml project.yml.backup 2>/dev/null || true
     @# Backup other files that get modified by xcodegen
-    @if [ -f bitchat.xcodeproj/project.pbxproj ]; then cp bitchat.xcodeproj/project.pbxproj bitchat.xcodeproj/project.pbxproj.backup; fi
+    @if [ -f anadoluchat.xcodeproj/project.pbxproj ]; then cp anadoluchat.xcodeproj/project.pbxproj anadoluchat.xcodeproj/project.pbxproj.backup; fi
     @if [ -f bitchat/Info.plist ]; then cp bitchat/Info.plist bitchat/Info.plist.backup; fi
 
 # Restore original files
@@ -34,9 +34,9 @@ restore:
     @# Restore iOS-specific files
     @if [ -f bitchat/LaunchScreen.storyboard.ios ]; then mv bitchat/LaunchScreen.storyboard.ios bitchat/LaunchScreen.storyboard; fi
     @# Use git to restore all modified files except Justfile
-    @git checkout -- project.yml bitchat.xcodeproj/project.pbxproj bitchat/Info.plist 2>/dev/null || echo "⚠️  Could not restore some files with git"
+    @git checkout -- project.yml anadoluchat.xcodeproj/project.pbxproj bitchat/Info.plist 2>/dev/null || echo "⚠️  Could not restore some files with git"
     @# Remove any backup files
-    @rm -f bitchat.xcodeproj/project.pbxproj.backup bitchat/Info.plist.backup 2>/dev/null || true
+    @rm -f anadoluchat.xcodeproj/project.pbxproj.backup bitchat/Info.plist.backup 2>/dev/null || true
 
 # Apply macOS-specific modifications
 patch-for-macos: backup
@@ -52,7 +52,7 @@ generate: patch-for-macos
 # Build the macOS app
 build: check generate
     @echo "Building BitChat for macOS..."
-    @xcodebuild -project bitchat.xcodeproj -scheme "bounchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
+    @xcodebuild -project anadoluchat.xcodeproj -scheme "bounchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
 
 # Run the macOS app
 run: build
@@ -63,12 +63,12 @@ run: build
 # Clean build artifacts and restore original files
 clean: restore
     @echo "Cleaning build artifacts..."
-    @rm -rf ~/Library/Developer/Xcode/DerivedData/bitchat-* 2>/dev/null || true
+    @rm -rf ~/Library/Developer/Xcode/DerivedData/anadoluchat-* 2>/dev/null || true
     @# Only remove the generated project if we have a backup, otherwise use git
-    @if [ -f bitchat.xcodeproj/project.pbxproj.backup ]; then \
-        rm -rf bitchat.xcodeproj; \
+    @if [ -f anadoluchat.xcodeproj/project.pbxproj.backup ]; then \
+        rm -rf anadoluchat.xcodeproj; \
     else \
-        git checkout -- bitchat.xcodeproj/project.pbxproj 2>/dev/null || echo "⚠️  Could not restore project.pbxproj"; \
+        git checkout -- anadoluchat.xcodeproj/project.pbxproj 2>/dev/null || echo "⚠️  Could not restore project.pbxproj"; \
     fi
     @rm -f project-macos.yml 2>/dev/null || true
     @echo "✅ Cleaned and restored original files"
@@ -78,7 +78,7 @@ dev-run: check
     @echo "Quick development build..."
     @if [ ! -f project.yml.backup ]; then just patch-for-macos; fi
     @xcodegen generate
-    @xcodebuild -project bitchat.xcodeproj -scheme "bounchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
+    @xcodebuild -project anadoluchat.xcodeproj -scheme "bounchat (macOS)" -configuration Debug CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO CODE_SIGN_ENTITLEMENTS="" build
     @APP=$(find ~/Library/Developer/Xcode/DerivedData -name "*.app" -path "*/Debug/*" -not -path "*/Index.noindex/*" | egrep -i "/(bounchat|anadoluchat|bitchat)\\.app$" | head -1); \
     if [ -n "$APP" ]; then open "$APP"; else echo "⚠️ No built .app found in Debug"; fi
 
@@ -106,13 +106,13 @@ info:
 # Force clean everything (nuclear option)
 nuke:
     @echo "🧨 Nuclear clean - removing all build artifacts and backups..."
-    @rm -rf ~/Library/Developer/Xcode/DerivedData/bitchat-* 2>/dev/null || true
-    @rm -rf bitchat.xcodeproj 2>/dev/null || true
+    @rm -rf ~/Library/Developer/Xcode/DerivedData/anadoluchat-* 2>/dev/null || true
+    @rm -rf anadoluchat.xcodeproj 2>/dev/null || true
     @rm -f project.yml.backup 2>/dev/null || true
     @rm -f project-macos.yml 2>/dev/null || true
-    @rm -f bitchat.xcodeproj/project.pbxproj.backup 2>/dev/null || true
+    @rm -f anadoluchat.xcodeproj/project.pbxproj.backup 2>/dev/null || true
     @rm -f bitchat/Info.plist.backup 2>/dev/null || true
     @# Restore iOS-specific files if they were moved
     @if [ -f bitchat/LaunchScreen.storyboard.ios ]; then mv bitchat/LaunchScreen.storyboard.ios bitchat/LaunchScreen.storyboard; fi
-    @git checkout -- project.yml bitchat.xcodeproj/project.pbxproj bitchat/Info.plist 2>/dev/null || echo "⚠️  Not a git repo or no changes to restore"
+    @git checkout -- project.yml anadoluchat.xcodeproj/project.pbxproj bitchat/Info.plist 2>/dev/null || echo "⚠️  Not a git repo or no changes to restore"
     @echo "✅ Nuclear clean complete"

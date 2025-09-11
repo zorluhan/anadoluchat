@@ -48,6 +48,8 @@ struct ContentView: View {
     @State private var autocompleteDebounceTimer: Timer?
     @State private var showLocationChannelsSheet = false
     @State private var expandedMessageIDs: Set<String> = []
+    @State private var showReportSheet: Bool = false
+    @State private var reportTargetMessage: BitchatMessage? = nil
     // Window sizes for rendering (infinite scroll up)
     @State private var windowCountPublic: Int = 300
     @State private var windowCountPrivate: [String: Int] = [:]
@@ -176,7 +178,7 @@ struct ContentView: View {
             }
         }
         .confirmationDialog(
-            selectedMessageSender.map { "@\($0)" } ?? "Actions",
+            selectedMessageSender.map { "@\($0)" } ?? "Eylemler",
             isPresented: $showMessageActions,
             titleVisibility: .visible
         ) {
@@ -188,7 +190,7 @@ struct ContentView: View {
                 }
             }
 
-            Button("direkt mesaj") {
+            Button("özel mesaj") {
                 if let peerID = selectedMessageSenderID {
                     if peerID.hasPrefix("nostr:") {
                         if let full = viewModel.fullNostrHex(forSenderPeerID: peerID) {
@@ -204,19 +206,19 @@ struct ContentView: View {
                 }
             }
             
-            Button("hug") {
+            Button("sarıl") {
                 if let sender = selectedMessageSender {
                     viewModel.sendMessage("/hug @\(sender)")
                 }
             }
             
-            Button("slap") {
+            Button("tokat at") {
                 if let sender = selectedMessageSender {
                     viewModel.sendMessage("/slap @\(sender)")
                 }
             }
             
-            Button("BLOCK", role: .destructive) {
+            Button("Engelle", role: .destructive) {
                 // Prefer direct geohash block when we have a Nostr sender ID
                 if let peerID = selectedMessageSenderID, peerID.hasPrefix("nostr:"),
                    let full = viewModel.fullNostrHex(forSenderPeerID: peerID),
@@ -281,7 +283,11 @@ struct ContentView: View {
                     }()
                     let items = windowedMessages.map { (uiID: "\(contextKey)|\($0.id)", message: $0) }
                     // Filter out empty/whitespace-only messages to avoid blank rows
-                    let filteredItems = items.filter { !$0.message.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+                    let filteredItems = items.filter {
+                        let notEmpty = !$0.message.content.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                        let notManuallyHidden = !ModerationService.shared.isHidden(id: $0.message.id)
+                        return notEmpty && notManuallyHidden
+                    }
 
                     ForEach(filteredItems, id: \.uiID) { item in
                         let message = item.message
@@ -302,10 +308,24 @@ struct ContentView: View {
                                     HStack(alignment: .top, spacing: 0) {
                                         let isLong = (message.content.count > TransportConfig.uiLongMessageLengthThreshold || message.content.hasVeryLongToken(threshold: TransportConfig.uiVeryLongTokenThreshold)) && cashuTokens.isEmpty
                                         let isExpanded = expandedMessageIDs.contains(message.id)
-                                        Text(viewModel.formatMessageAsText(message, colorScheme: colorScheme))
-                                            .fixedSize(horizontal: false, vertical: true)
-                                            .lineLimit(isLong && !isExpanded ? TransportConfig.uiLongMessageLineLimit : nil)
+                                        let hiddenByFilter = ModerationService.shared.hideOnReceive && ModerationService.shared.shouldMute(message.content)
+                                        if hiddenByFilter && !isExpanded {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "eye.slash")
+                                                    .foregroundColor(.secondary)
+                                                Text("mesaj filtre tarafından gizlendi")
+                                                    .foregroundColor(.secondary)
+                                                Button("göster") { expandedMessageIDs.insert(message.id) }
+                                                    .buttonStyle(.plain)
+                                            }
+                                            .font(.system(size: 12, design: .monospaced))
                                             .frame(maxWidth: .infinity, alignment: .leading)
+                                        } else {
+                                            Text(viewModel.formatMessageAsText(message, colorScheme: colorScheme))
+                                                .fixedSize(horizontal: false, vertical: true)
+                                                .lineLimit(isLong && !isExpanded ? TransportConfig.uiLongMessageLineLimit : nil)
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                        }
                                         
                                         // Delivery status indicator for private messages
                                         if message.isPrivate && message.sender == viewModel.nickname,
@@ -428,6 +448,10 @@ struct ContentView: View {
                                 pb.clearContents()
                                 pb.setString(message.content, forType: .string)
                                 #endif
+                            }
+                            Button("Rapor et") {
+                                reportTargetMessage = message
+                                showReportSheet = true
                             }
                         }
                         .padding(.horizontal, 12)
@@ -1252,12 +1276,22 @@ struct ContentView: View {
                 .onAppear { viewModel.isLocationChannelsSheetPresented = true }
                 .onDisappear { viewModel.isLocationChannelsSheetPresented = false }
         }
+        .sheet(isPresented: Binding(get: { showReportSheet }, set: { if !$0 { showReportSheet = false; reportTargetMessage = nil } })) {
+            if let msg = reportTargetMessage {
+                ReportMessageView(message: msg, viewModel: viewModel)
+            }
+        }
         .alert("dikkat", isPresented: $viewModel.showScreenshotPrivacyWarning) {
             Button("tamam", role: .cancel) {}
         } message: {
             Text("konum kanallarının ekran görüntüleri konumunuzu açığa çıkarır. herkese açık paylaşmadan önce düşünün.")
         }
         .background(backgroundColor.opacity(0.95))
+        .alert("takma ad uygun değil", isPresented: Binding(get: { viewModel.nicknameValidationError != nil }, set: { if !$0 { viewModel.nicknameValidationError = nil } })) {
+            Button("tamam", role: .cancel) {}
+        } message: {
+            Text(viewModel.nicknameValidationError ?? "")
+        }
     }
     
     private var privateHeaderView: some View {

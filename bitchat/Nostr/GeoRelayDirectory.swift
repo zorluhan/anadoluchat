@@ -17,10 +17,8 @@ final class GeoRelayDirectory {
     private let fetchInterval: TimeInterval = TransportConfig.geoRelayFetchIntervalSeconds // 24h
 
     private init() {
-        // Load cached or bundled data synchronously
-        self.entries = self.loadLocalEntries()
-        // Fire-and-forget remote refresh if stale
-        prefetchIfNeeded()
+        // Defer any I/O until first use
+        self.entries = []
     }
 
     /// Returns up to `count` relay URLs (wss://) closest to the geohash center.
@@ -31,6 +29,7 @@ final class GeoRelayDirectory {
 
     /// Returns up to `count` relay URLs (wss://) closest to the given coordinate.
     func closestRelays(toLat lat: Double, lon: Double, count: Int = 5) -> [String] {
+        ensureLoaded()
         guard !entries.isEmpty else { return [] }
         let sorted = entries
             .sorted { a, b in
@@ -42,10 +41,17 @@ final class GeoRelayDirectory {
 
     // MARK: - Remote Fetch
     func prefetchIfNeeded() {
+        ensureLoaded()
         let now = Date()
         let last = UserDefaults.standard.object(forKey: lastFetchKey) as? Date ?? .distantPast
         guard now.timeIntervalSince(last) >= fetchInterval else { return }
         fetchRemote()
+    }
+
+    private func ensureLoaded() {
+        if entries.isEmpty {
+            entries = loadLocalEntries()
+        }
     }
 
     private func fetchRemote() {

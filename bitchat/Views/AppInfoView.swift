@@ -3,6 +3,9 @@ import SwiftUI
 struct AppInfoView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) var colorScheme
+    @EnvironmentObject var viewModel: ChatViewModel
+    @State private var showPrivacyPolicy = false
+    @State private var showTerms = false
     
     private var backgroundColor: Color {
         colorScheme == .dark ? Color.black : Color.white
@@ -77,6 +80,8 @@ struct AppInfoView: View {
             .background(backgroundColor)
         }
         .frame(width: 600, height: 700)
+        .sheet(isPresented: $showPrivacyPolicy) { PrivacyPolicyView() }
+        .sheet(isPresented: $showTerms) { TermsView() }
         #else
         NavigationView {
             ScrollView {
@@ -84,15 +89,13 @@ struct AppInfoView: View {
             }
             .background(backgroundColor)
             .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button("kapat") {
-                        dismiss()
-                    }
+            .navigationBarItems(trailing:
+                Button("kapat") { dismiss() }
                     .foregroundColor(textColor)
-                }
-            }
+            )
         }
+        .sheet(isPresented: $showPrivacyPolicy) { PrivacyPolicyView() }
+        .sheet(isPresented: $showTerms) { TermsView() }
         #endif
     }
     
@@ -188,6 +191,60 @@ struct AppInfoView: View {
             .cornerRadius(8)
             
             .padding(.top)
+
+            // Legal / Support
+            VStack(alignment: .leading, spacing: 12) {
+                SectionHeader("YASAL / DESTEK")
+                Button {
+                    showPrivacyPolicy = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "doc.text")
+                        Text("Gizlilik Politikası")
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(textColor)
+
+                Button {
+                    showTerms = true
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "scroll")
+                        Text("Kullanım Şartları")
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(textColor)
+
+                NavigationLink(destination: ModerationSettingsView(viewModel: viewModel)) {
+                    HStack(spacing: 8) {
+                        Image(systemName: "eye.slash")
+                        Text("Moderasyon (Kelime Filtresi)")
+                    }
+                }
+
+                Button {
+                    let to = "zorluhan@capish.co"
+                    #if os(iOS)
+                    if let url = URL(string: "mailto:\(to)") { UIApplication.shared.open(url) }
+                    #else
+                    if let url = URL(string: "mailto:\(to)") { NSWorkspace.shared.open(url) }
+                    #endif
+                } label: {
+                    HStack(spacing: 8) {
+                        Image(systemName: "envelope")
+                        Text("Destek ile iletişim")
+                    }
+                }
+                .buttonStyle(.plain)
+                .foregroundColor(textColor)
+
+                Text("Raporlara 24 saat içinde yanıt veririz.")
+                    .font(.system(size: 12, design: .monospaced))
+                    .foregroundColor(secondaryTextColor)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .padding()
     }
@@ -252,4 +309,5 @@ struct FeatureRow: View {
 
 #Preview {
     AppInfoView()
+        .environmentObject(ChatViewModel())
 }

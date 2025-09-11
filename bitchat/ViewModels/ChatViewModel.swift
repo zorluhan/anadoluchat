@@ -239,6 +239,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
             }
         }
     }
+    @Published var nicknameValidationError: String? = nil
     
     // MARK: - Service Delegates
     
@@ -685,9 +686,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
             }
             .store(in: &cancellables)
         
-        // Request notification permission
-        NotificationService.shared.requestAuthorization()
-        
+        // Permissions are requested by PermissionsGateView on first run
         
         // Listen for favorite status changes
         NotificationCenter.default.addObserver(
@@ -990,13 +989,29 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
     func validateAndSaveNickname() {
         // Trim whitespace from nickname
         let trimmed = nickname.trimmingCharacters(in: .whitespacesAndNewlines)
-        
-        // Check if nickname is empty after trimming
-        if trimmed.isEmpty {
+        // Current persisted value to restore on failure
+        let currentSaved = userDefaults.string(forKey: nicknameKey)
+
+        // Empty → generate anon
+        guard !trimmed.isEmpty else {
             nickname = "anon\(Int.random(in: 1000...9999))"
-        } else {
-            nickname = trimmed
+            saveNickname()
+            return
         }
+
+        // Moderation for nickname: block objectionable words and URL/email
+        if ModerationService.shared.shouldMute(trimmed) || ModerationService.shared.containsURLorEmail(trimmed) {
+            // Revert and show error
+            if let saved = currentSaved, !saved.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                nickname = saved
+            } else {
+                nickname = "anon\(Int.random(in: 1000...9999))"
+            }
+            nicknameValidationError = "takma ad uygunsuz içerik/URL/e‑posta içeremez"
+            return
+        }
+
+        nickname = trimmed
         saveNickname()
     }
     
@@ -1279,6 +1294,12 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
         // Ignore messages that are empty or whitespace-only to prevent blank lines
         let trimmed = content.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty else { return }
+
+        // Moderation: block on send (Turkish-only word list)
+        if ModerationService.shared.blockOnSend && ModerationService.shared.shouldMute(trimmed) {
+            addSystemMessage("mesaj uygunluk filtresine takıldı ve gönderilmedi")
+            return
+        }
         
         // Check for commands
         if content.hasPrefix("/") {

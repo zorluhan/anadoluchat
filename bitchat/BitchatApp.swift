@@ -8,10 +8,17 @@
 
 import SwiftUI
 import UserNotifications
+#if os(iOS)
+import CoreBluetooth
+#endif
+#if canImport(os)
+import os.log
+import os.signpost
+#endif
 
 @main
 struct AnadoluchatApp: App {
-    @StateObject private var chatViewModel = ChatViewModel()
+    @State private var accepted = TermsAcceptance.isAccepted
     #if os(iOS)
     @Environment(\.scenePhase) var scenePhase
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -20,101 +27,108 @@ struct AnadoluchatApp: App {
     #endif
     
     init() {
+        #if canImport(os)
+        if #available(iOS 12.0, macOS 10.14, *) {
+            let log = OSLog(subsystem: "chat.bitchat", category: "launch")
+            let sp = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "AppInit", signpostID: sp)
+            UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+            // Heavy initializations (VM and relay prefetch) are deferred until after terms acceptance.
+            os_signpost(.end, log: log, name: "AppInit", signpostID: sp)
+            return
+        }
+        #endif
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
-        // Warm up georelay directory and refresh if stale (once/day)
-        GeoRelayDirectory.shared.prefetchIfNeeded()
+        // Heavy initializations (VM and relay prefetch) are deferred until after terms acceptance.
     }
     
     var body: some Scene {
         WindowGroup {
-            ContentView()
-                .preferredColorScheme(.dark)
-                .environmentObject(chatViewModel)
-                .onAppear {
-                    NotificationDelegate.shared.chatViewModel = chatViewModel
-                    // QR verification removed
-                    #if os(iOS)
-                    appDelegate.chatViewModel = chatViewModel
-                    #elseif os(macOS)
-                    appDelegate.chatViewModel = chatViewModel
-                    #endif
-                    // Check for shared content
-                    checkForSharedContent()
-                }
-                .onOpenURL { url in
-                    handleURL(url)
-                }
-                #if os(iOS)
-                .onChange(of: scenePhase) { newPhase in
-                    switch newPhase {
-                    case .background:
-                        // Keep BLE mesh running in background; BLEService adapts scanning automatically
-                        break
-                    case .active:
-                        // Restart services when becoming active
-                        chatViewModel.meshService.startServices()
-                        checkForSharedContent()
-                    case .inactive:
-                        break
-                    @unknown default:
-                        break
+            Group {
+                if !accepted {
+                    FirstRunConsentView {
+                        // Trigger permissions quickly before heavy init
+                        requestEarlyPermissions()
+                        // Move to main UI shortly after
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            accepted = true
+                        }
+                    }
+                } else {
+                    MainAppRootView { vm in
+                        NotificationDelegate.shared.chatViewModel = vm
+                        #if os(iOS)
+                        appDelegate.chatViewModel = vm
+                        #elseif os(macOS)
+                        appDelegate.chatViewModel = vm
+                        #endif
                     }
                 }
-                .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
-                    // Check for shared content when app becomes active
-                    checkForSharedContent()
-                }
-                #elseif os(macOS)
-                .onReceive(NotificationCenter.default.publisher(for: NSApplication.didBecomeActiveNotification)) { _ in
-                    // App became active
-                }
-                #endif
+            }
+            .preferredColorScheme(.dark)
         }
         #if os(macOS)
         .windowStyle(.hiddenTitleBar)
         .windowResizability(.contentSize)
         #endif
     }
-    
-    private func handleURL(_ url: URL) {
-        if url.scheme == "bounchat" && url.host == "share" {
-            // Handle shared content
-            checkForSharedContent()
-        }
+}
+
+// MARK: - Main app root after terms acceptance
+struct MainAppRootView: View {
+    @StateObject private var chatViewModel = ChatViewModel()
+    var onReady: (ChatViewModel) -> Void = { _ in }
+    #if os(iOS)
+    @Environment(\.scenePhase) var scenePhase
+    #endif
+
+    var body: some View {
+        ContentView()
+            .environmentObject(chatViewModel)
+            .onAppear {
+                onReady(chatViewModel)
+                // Warm up georelay after terms acceptance
+                GeoRelayDirectory.shared.prefetchIfNeeded()
+                checkForSharedContent()
+            }
+            .onOpenURL { url in handleURL(url) }
+            #if os(iOS)
+            .onChange(of: scenePhase) { newPhase in
+                switch newPhase {
+                case .background: break
+                case .active:
+                    chatViewModel.meshService.startServices()
+                    checkForSharedContent()
+                case .inactive: break
+                @unknown default: break
+                }
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.didBecomeActiveNotification)) { _ in
+                checkForSharedContent()
+            }
+            #endif
     }
-    
+
+    private func handleURL(_ url: URL) {
+        if url.scheme == "bounchat" && url.host == "share" { checkForSharedContent() }
+    }
+
     private func checkForSharedContent() {
-        // Check app group for shared content from extension
-        guard let userDefaults = UserDefaults(suiteName: "group.capish.testiPad5") else {
-            return
-        }
-        
+        guard let userDefaults = UserDefaults(suiteName: "group.capish.testiPad5") else { return }
         guard let sharedContent = userDefaults.string(forKey: "sharedContent"),
-              let sharedDate = userDefaults.object(forKey: "sharedContentDate") as? Date else {
-            return
-        }
-        
-        // Only process if shared within configured window
+              let sharedDate = userDefaults.object(forKey: "sharedContentDate") as? Date else { return }
         if Date().timeIntervalSince(sharedDate) < TransportConfig.uiShareAcceptWindowSeconds {
             let contentType = userDefaults.string(forKey: "sharedContentType") ?? "text"
-            
-            // Clear the shared content
             userDefaults.removeObject(forKey: "sharedContent")
             userDefaults.removeObject(forKey: "sharedContentType")
             userDefaults.removeObject(forKey: "sharedContentDate")
-            // No need to force synchronize here
-            
-            // Send the shared content immediately on the main queue
             DispatchQueue.main.async {
                 if contentType == "url" {
-                    // Try to parse as JSON first
                     if let data = sharedContent.data(using: .utf8),
                        let urlData = try? JSONSerialization.jsonObject(with: data) as? [String: String],
                        let url = urlData["url"] {
-                        // Send plain URL
                         self.chatViewModel.sendMessage(url)
                     } else {
-                        // Fallback to simple URL
                         self.chatViewModel.sendMessage(sharedContent)
                     }
                 } else {
@@ -209,6 +223,47 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         completionHandler([.banner, .sound])
     }
 }
+
+// MARK: - Early permission triggers
+fileprivate func requestEarlyPermissions() {
+    // Notifications
+    NotificationService.shared.requestAuthorization()
+    #if os(iOS)
+    // Bluetooth (quick warm-up to surface prompt)
+    EarlyBluetoothKick.shared.start()
+    #endif
+}
+
+#if os(iOS)
+final class EarlyBluetoothKick: NSObject, CBCentralManagerDelegate {
+    static let shared = EarlyBluetoothKick()
+    private var central: CBCentralManager?
+    private var didScan = false
+
+    func start() {
+        if central == nil {
+            central = CBCentralManager(delegate: self, queue: nil)
+        } else if central?.state == .poweredOn {
+            beginScanIfNeeded()
+        }
+    }
+
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if central.state == .poweredOn {
+            beginScanIfNeeded()
+        }
+    }
+
+    private func beginScanIfNeeded() {
+        guard !didScan, let c = central else { return }
+        didScan = true
+        c.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.central?.stopScan()
+        }
+    }
+}
+#endif
 
 extension String {
     var nilIfEmpty: String? {
