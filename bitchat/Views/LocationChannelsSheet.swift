@@ -2,6 +2,7 @@ import SwiftUI
 import CoreLocation
 #if os(iOS)
 import UIKit
+import CoreBluetooth
 #else
 import AppKit
 #endif
@@ -26,7 +27,17 @@ struct LocationChannelsSheet: View {
                 Group {
                     switch manager.permissionState {
                     case LocationChannelManager.PermissionState.notDetermined:
-                        Button(action: { manager.enableLocationChannels() }) {
+                        Button(action: {
+                            // Warm up Bluetooth permission on first interaction
+                            #if os(iOS)
+                            if #available(iOS 13.0, *) {
+                                if CBCentralManager.authorization == .notDetermined {
+                                    EarlyBluetoothKick.shared.start()
+                                }
+                            }
+                            #endif
+                            manager.enableLocationChannels()
+                        }) {
                             Text("konum al ve benim geohashlarım")
                                 .font(.system(size: 12, design: .monospaced))
                                 .foregroundColor(standardGreen)
@@ -87,6 +98,14 @@ struct LocationChannelsSheet: View {
             // Geohash sampling is now managed by ChatViewModel globally
             // Lazily warm georelay directory (no I/O until first use)
             GeoRelayDirectory.shared.prefetchIfNeeded()
+            // Proactively surface Bluetooth permission if not determined yet
+            #if os(iOS)
+            if #available(iOS 13.0, *) {
+                if CBCentralManager.authorization == .notDetermined {
+                    EarlyBluetoothKick.shared.start()
+                }
+            }
+            #endif
         }
         .onDisappear {
             manager.endLiveRefresh()

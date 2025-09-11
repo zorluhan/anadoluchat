@@ -1,4 +1,8 @@
 import SwiftUI
+#if canImport(os)
+import os.log
+import os.signpost
+#endif
 
 struct FirstRunConsentView: View {
     @Environment(\.colorScheme) var colorScheme
@@ -13,17 +17,24 @@ struct FirstRunConsentView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Kullanım Şartları ve Gizlilik")
-                .font(.system(size: 20, weight: .bold, design: .monospaced))
+                .font(.system(size: 22, weight: .semibold))
                 .foregroundColor(textColor)
 
-            Text("Bu uygulama kullanıcı tarafından üretilen içerik barındırır. \nAşağıdaki kuralları kabul etmeden devam edemezsiniz:")
-                .font(.system(size: 14, design: .monospaced))
+            Text("bounchat; hesabın, telefon numarasının ve merkezi sunucuların olmadığı, eşler arası bir sohbet deneyimi sunar. Gizliliğiniz önceliğimizdir; verilerinizi takip etmeyiz. Lütfen topluluğu saygılı ve güvenli tutmamıza yardımcı olun.")
+                .font(.system(size: 15))
+                .foregroundColor(textColor)
+                .lineSpacing(4)
+
+            Text("Devam etmeden önce aşağıdaki temel kuralları anladığınızı onaylayın:")
+                .font(.system(size: 15, weight: .medium))
+                .foregroundColor(textColor)
 
             VStack(alignment: .leading, spacing: 8) {
-                bullet("Nefret söylemi, taciz, yasa dışı içerik ve şiddete \nsıfır tolerans.")
-                bullet("Uygunsuz içerikleri ‘Rapor Et’ ile bildirin; 24 saat içinde işlem taahhüdü.")
-                bullet("İstenmeyen kullanıcıları ‘Engelle’ ile durdurabilirsiniz.")
-                bullet("Sunucu yok, takip yok; detaylar için Gizlilik Politikası.")
+                bullet("Nefret söylemi, taciz, yasa dışı içerik ve şiddet çağrılarına izin verilmez.")
+                bullet("Uygunsuz içerikleri ‘Rapor Et’ ile bildirebilirsiniz; bildirimi önceliklendirerek inceleriz.")
+                bullet("İstemediğiniz konuşmaları ‘Engelle’ ile durdurabilirsiniz.")
+                bullet("Geohash kanalları herkese açıktır; özel mesajlar desteklendiğinde uçtan uca şifrelenir. Ekran görüntülerini engelleyemeyiz, hassas bilgileri dikkatle paylaşın.")
+                bullet("Bluetooth ve konum izinlerinizi Ayarlar’dan dilediğiniz an yönetebilirsiniz. Detaylar için Gizlilik Politikası’nı okuyun.")
             }
 
             HStack(spacing: 12) {
@@ -38,6 +49,7 @@ struct FirstRunConsentView: View {
 
             Toggle(isOn: $agreed) {
                 Text("Şartları okudum ve kabul ediyorum")
+                    .foregroundColor(textColor)
             }
             .toggleStyle(.switch)
 
@@ -58,6 +70,14 @@ struct FirstRunConsentView: View {
         .background(backgroundColor)
         .sheet(isPresented: $showPrivacy) { PrivacyPolicyView() }
         .sheet(isPresented: $showTerms) { TermsView() }
+        .onAppear {
+            #if canImport(os)
+            if #available(iOS 12.0, macOS 10.14, *) {
+                let log = OSLog(subsystem: "chat.bitchat", category: "launch")
+                os_signpost(.event, log: log, name: "FirstRunConsentView.onAppear")
+            }
+            #endif
+        }
     }
 
     @ViewBuilder
@@ -66,11 +86,12 @@ struct FirstRunConsentView: View {
             Text("•")
             Text(s)
         }
-        .font(.system(size: 13, design: .monospaced))
+        .font(.system(size: 14))
+        .foregroundColor(textColor)
+        .lineSpacing(3)
     }
 }
 
 #Preview {
     FirstRunConsentView(onAccepted: {})
 }
-

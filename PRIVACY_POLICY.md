@@ -1,104 +1,43 @@
 # Gizlilik Politikası
 
-Güncelleme: Ocak 2025
-
-## Taahhüdümüz
-
-Bu uygulama gizlilik odaklıdır. Özel iletişimin temel bir hak olduğuna inanıyoruz. Bu politika, gizliliğinizi nasıl koruduğumuzu açıklar.
+## Biz kimiz
+bounchat, eşler arası (peer-to-peer) bir kampüs mesajlaşma uygulamasıdır. Mesajlarınızı saklayan merkezi sunucular çalıştırmıyoruz. Analitik veya reklam platformu da işletmiyoruz. Tüm mesajlar kendi telefonunuzda depolanır ve telefonunuzdan dışarı çıkmaz.
 
 ## Özet
+- Hesap veya telefon numarası yok.
+- Analitik, reklam ya da takip SDK’sı yok.
+- Kişisel verileri toplamıyor, satmıyor veya paylaşmıyoruz.
+- Mesajlar Bluetooth üzerinden eşler arası veya herkese açık Nostr aktarıcıları üzerinden gönderilir. Herkese açık mesajlar herkes tarafından görülebilir; özel mesajlar ise desteklendiğinde uçtan uca şifrelenir.
 
-- **Kişisel veri toplamıyoruz** – İsim, e‑posta, telefon numarası yok
-- **Sunucu yok** – Tüm işlemler cihazınızda ve eşler arası gerçekleşir
-- **Takip yok** – Analitik, telemetri veya izleme yok
-- **Açık kaynak** – Kodumuzu okuyarak doğrulayabilirsiniz
+## Toplamadığımız veriler
+Sunucularımızda şunları toplamaz veya saklamayız: isimler, e-postalar, telefon numaraları, kişiler, hassas cihaz tanımlayıcıları (IDFA dahil), kullanım analitiği, satın alma geçmişi veya teşhis günlükleri. Kişisel bilgileri satmaz veya gizlilik yasalarında tanımlandığı şekilde “paylaşmayız”.
 
-## Cihazınızda Tutulan Veriler
+## Cihazınızda işlenen veriler
+- Takma ad ve ayarlar: yalnızca cihazınızda saklanır.
+- Kriptografik anahtarlar: cihazınızda (iOS Keychain) üretilir ve saklanır.
+- Konum (yaklaşık): konum kanallarını açarsanız, yakın geohash kanallarını hesaplamak için cihaz üzerinde “Uygulamayı Kullanırken” izni isteriz. Konumunuz sunucularımıza iletilmez. İstediğiniz zaman Ayarlar’dan izni geri alabilirsiniz.
+- Bluetooth: yakın cihazları bulmak ve onlarla iletişim kurmak için kullanılır. İlk kullanımda sistem Bluetooth izin uyarısı gösterebilir.
 
-1. **Kimlik Anahtarı**
-   - İlk çalıştırmada üretilen kriptografik anahtar
-   - Cihazın güvenli alanında yerel olarak saklanır
-   - Favoriler gibi ilişkileri sürdürmeye yarar; cihazı terk etmez
+## Mesajlaşma ve aktarıcılar
+- Mesh/Bluetooth: Mesajlar doğrudan yakın cihazlar arasında iletilir. Özel mesh mesajları Noise tabanlı uçtan uca şifreleme ile korunur.
+- Nostr/İnternet: Yakın değilseniz, mesajlar herkese açık Nostr aktarıcıları üzerinden gönderilebilir. Geohash gönderileri herkese açıktır ve aktarıcılar tarafından saklanabilir. Özel DM’ler NIP-17 hediye paketli şifreleme ile korunur. Aktarıcılar üçüncü taraflardır; kendi politikaları geçerlidir. Biz onları kontrol etmeyiz veya işletmeyiz.
 
-2. **Takma Ad**
-   - Seçtiğiniz görünen ad
-   - Yalnızca cihazınızda saklanır; ileti kurduğunuz eşlerle paylaşılır
+## Bildirimler
+Uygulama yerel bildirimler veya platform bildirimlerini zamanlayabilir. Bildirim işleme Apple/işletim sistemi tarafından sağlanır; biz kendi push sunucumuzu işletmeyiz ve kendi kullanımımız için push belirteçlerini toplamıyoruz.
 
-3. **Mesaj Geçmişi** (etkinse)
-   - Yerel olarak şifreli tutulur; istediğiniz zaman silebilirsiniz
+## Seçenekleriniz ve kontrolleriniz
+- İzinler: Bluetooth ve Konumu cihaz Ayarları’ndan yönetebilirsiniz.
+- Veri temizleme: Uygulama içindeki silme/temizleme fonksiyonlarını (acil silme dahil) kullanarak cihazınızdaki içerik ve anahtarları kaldırabilirsiniz.
+- Herkese açık gönderiler: Geohash kanal gönderilerinin herkese açık olduğunu ve üçüncü taraf aktarıcılar tarafından saklanabileceğini unutmayın.
 
-4. **Favori Kişiler**
-   - İşaretlediğiniz eşlerin açık anahtarları
-   - Yalnızca cihazınızda saklanır
+## Çocukların gizliliği
+bounchat, 13 yaş altındaki (veya bulunduğunuz bölgedeki asgari yaş sınırının altındaki) çocuklara yönelik değildir. Çocukların kişisel verilerini bilerek toplamıyoruz.
 
-### Oturum Verileri (Geçici)
+## Güvenlik
+Anahtarlar iOS Keychain’de saklanır. Mesh DM’leri Noise şifrelemesiyle, Nostr DM’leri standart Nostr şifrelemesiyle korunur. Hiçbir güvenlik sistemi kusursuz değildir; hassas bilgiler paylaşırken dikkatli olun.
 
-- Aktif bağlantılar, yönlendirme bilgisi, çevrimdışı eşler için kısa süreli kuyruklar (maks. 12 saat)
+## Uluslararası aktarımlar
+Sunucular işletmiyoruz ve verilerinizi kendi altyapımıza aktarmıyoruz. Ancak herkese açık aktarıcılara gönderi yaparsanız, içeriğiniz bu üçüncü taraflarca küresel olarak saklanabilir ve sunulabilir.
 
-## Paylaşılan Bilgiler
-
-Yakındaki eşler şunları görebilir:
-- Takma adınız
-- Oturumluk açık anahtarınız
-- Gönderdiğiniz mesajlar
-- Yaklaşık Bluetooth sinyal gücü
-
-Parola korumalı bir odaya katıldığınızda, odaya erişimi olanlar mesajlarınızı görebilir ve takma adınızı listeleyebilir.
-
-## Yapmadıklarımız
-
-- Kişisel bilgi toplamayız
-- Konum takibi yapmayız
-- Sunucularda veri tutmayız
-- Üçüncü taraflarla veri paylaşmayız
-- Analitik/telemetri yoktur
-- Profil oluşturmayız
-- Kayıt/zorunlu hesap yoktur
-
-## Şifreleme
-
-Özel mesajlar uçtan uca şifrelenir ve modern kriptografi kullanılır.
-
-## Haklarınız
-
-- **Her şeyi silin**: Logoya üç kez dokunarak tüm verileri temizleyin
-- **İstediğiniz zaman çıkın**: Uygulamayı kapattığınızda görünürlüğünüz biter
-- **Hesap yok**: Sunucuda silinecek bir şey yoktur
-
-## İzinler
-
-- Bluetooth yalnızca eşler arası iletişim içindir
-- Konum verisi istemez, saklamaz
-- İzni istediğiniz an sistem ayarlarından kaldırabilirsiniz
-
-## Çocukların Gizliliği
-
-Kişisel veri toplamadığımız için çocuklardan bilerek veri toplamıyoruz.
-
-## Saklama
-
-- Mesajlar: Uygulamadan çıkınca bellekten silinir (geçmiş açık değilse)
-- Kimlik anahtarı ve favoriler: Siz silene kadar cihazda kalır
-
-## Güvenlik Önlemleri
-
-- Tüm iletişim şifrelidir
-- Sunucu bulunmadığı için merkezi sızıntı riski yoktur
-- Açık kaynak kod ve düzenli güvenlik iyileştirmeleri
-
-## Değişiklikler
-
-Politika güncellenirse tarih değişir ve uygulamaya dahil edilir.
-
-## İletişim
-
-Kaynak kodu: https://github.com/permissionlesstech/bitchat/tree/main
-Sorular için GitHub üzerinde konu açabilirsiniz.
-
-## Felsefe
-
-Gizlilik bir özellik değildir; temel amaçtır. Sunucusuz, hesapsız, takip olmadan iletişim mümkündür.
-
----
-
-Bu metin, The Unlicense kapsamındaki kamu malı lisansı ile yayımlanır.
+## Bu politikanın değişiklikleri
+Bu politikayı açıklık veya yasal nedenlerle güncelleyebiliriz. Önemli değişiklikler “Son güncelleme” tarihinde yansıtılır.

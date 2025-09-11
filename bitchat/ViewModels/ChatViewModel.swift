@@ -686,9 +686,7 @@ class ChatViewModel: ObservableObject, BitchatDelegate {
             }
             .store(in: &cancellables)
         
-        // Request notification permission
-        NotificationService.shared.requestAuthorization()
-        
+        // Permissions are requested by PermissionsGateView on first run
         
         // Listen for favorite status changes
         NotificationCenter.default.addObserver(

@@ -35,6 +35,10 @@
 	<string>bounchat, yakındaki kullanıcılarla sohbet etmek için güvenli bir mesh ağ oluşturmak amacıyla Bluetooth’u kullanır.</string>
 	<key>NSBluetoothPeripheralUsageDescription</key>
 	<string>bounchat, yakındaki diğer bounchat kullanıcılarını keşfetmek ve bağlanmak için Bluetooth’u kullanır.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>bounchat, yakınınızdaki geohash kanallarını önermek için yaklaşık konumunuzu kullanır. Kesin GPS asla paylaşılmaz.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>bounchat, QR kodları tarayarak eş doğrulaması yapmak için kamerayı kullanır.</string>
 	<key>UIBackgroundModes</key>
 	<array>
 		<string>bluetooth-central</string>

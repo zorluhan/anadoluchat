@@ -80,10 +80,8 @@ final class LocationChannelManager: NSObject, CLLocationManagerDelegate, Observa
         }
         switch status {
         case .notDetermined:
-            // Ensure the authorization prompt is requested on the main actor
-            Task { @MainActor in
-                self.cl.requestWhenInUseAuthorization()
-            }
+            // Request on the current thread; CoreLocation will ensure main-thread presentation
+            cl.requestWhenInUseAuthorization()
         case .restricted:
             Task { @MainActor in self.permissionState = .restricted }
         case .denied:

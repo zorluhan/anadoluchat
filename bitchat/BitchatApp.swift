@@ -8,6 +8,13 @@
 
 import SwiftUI
 import UserNotifications
+#if os(iOS)
+import CoreBluetooth
+#endif
+#if canImport(os)
+import os.log
+import os.signpost
+#endif
 
 @main
 struct AnadoluchatApp: App {
@@ -20,6 +27,17 @@ struct AnadoluchatApp: App {
     #endif
     
     init() {
+        #if canImport(os)
+        if #available(iOS 12.0, macOS 10.14, *) {
+            let log = OSLog(subsystem: "chat.bitchat", category: "launch")
+            let sp = OSSignpostID(log: log)
+            os_signpost(.begin, log: log, name: "AppInit", signpostID: sp)
+            UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
+            // Heavy initializations (VM and relay prefetch) are deferred until after terms acceptance.
+            os_signpost(.end, log: log, name: "AppInit", signpostID: sp)
+            return
+        }
+        #endif
         UNUserNotificationCenter.current().delegate = NotificationDelegate.shared
         // Heavy initializations (VM and relay prefetch) are deferred until after terms acceptance.
     }
@@ -27,7 +45,16 @@ struct AnadoluchatApp: App {
     var body: some Scene {
         WindowGroup {
             Group {
-                if accepted {
+                if !accepted {
+                    FirstRunConsentView {
+                        // Trigger permissions quickly before heavy init
+                        requestEarlyPermissions()
+                        // Move to main UI shortly after
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                            accepted = true
+                        }
+                    }
+                } else {
                     MainAppRootView { vm in
                         NotificationDelegate.shared.chatViewModel = vm
                         #if os(iOS)
@@ -36,8 +63,6 @@ struct AnadoluchatApp: App {
                         appDelegate.chatViewModel = vm
                         #endif
                     }
-                } else {
-                    FirstRunConsentView { accepted = true }
                 }
             }
             .preferredColorScheme(.dark)
@@ -198,6 +223,47 @@ class NotificationDelegate: NSObject, UNUserNotificationCenterDelegate {
         completionHandler([.banner, .sound])
     }
 }
+
+// MARK: - Early permission triggers
+fileprivate func requestEarlyPermissions() {
+    // Notifications
+    NotificationService.shared.requestAuthorization()
+    #if os(iOS)
+    // Bluetooth (quick warm-up to surface prompt)
+    EarlyBluetoothKick.shared.start()
+    #endif
+}
+
+#if os(iOS)
+final class EarlyBluetoothKick: NSObject, CBCentralManagerDelegate {
+    static let shared = EarlyBluetoothKick()
+    private var central: CBCentralManager?
+    private var didScan = false
+
+    func start() {
+        if central == nil {
+            central = CBCentralManager(delegate: self, queue: nil)
+        } else if central?.state == .poweredOn {
+            beginScanIfNeeded()
+        }
+    }
+
+    func centralManagerDidUpdateState(_ central: CBCentralManager) {
+        if central.state == .poweredOn {
+            beginScanIfNeeded()
+        }
+    }
+
+    private func beginScanIfNeeded() {
+        guard !didScan, let c = central else { return }
+        didScan = true
+        c.scanForPeripherals(withServices: nil, options: [CBCentralManagerScanOptionAllowDuplicatesKey: false])
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.central?.stopScan()
+        }
+    }
+}
+#endif
 
 extension String {
     var nilIfEmpty: String? {
